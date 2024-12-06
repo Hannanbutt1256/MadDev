@@ -187,7 +187,7 @@ const Sidebar = () => {
                 <button
                   className="p-2 mt-2  md:flex rounded-md border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text"
                   onClick={async () => {
-                    await navigate("/create-post");
+                    await navigate("/create-podcast");
                     toggleMenu();
                   }}
                 >
