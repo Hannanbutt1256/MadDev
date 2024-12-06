@@ -15,6 +15,7 @@ import SavePostPage from "../pages/SavePostPage";
 import ProfilePage from "../pages/ProfilePage";
 import NotificationPage from "../pages/NotificationPage";
 import SubscriptionPage from "../pages/SubscriptionPage";
+import CreatePodcastsPage from "../pages/CreatePodcastsPage";
 
 const routes = createRoutesFromElements(
   <Route path="/" element={<App />}>
@@ -32,6 +33,7 @@ const routes = createRoutesFromElements(
     <Route path="profile" element={<ProfilePage />} />
     <Route path="notifications" element={<NotificationPage />} />
     <Route path="subscription" element={<SubscriptionPage />} />
+    <Route path="create-podcast" element={<CreatePodcastsPage />} />
   </Route>
 );
 export default routes;
