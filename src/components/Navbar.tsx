@@ -33,8 +33,8 @@ const Navbar = () => {
 
   return (
     // Logo and Search Input
-    <div className="sticky top-0 z-50 flex justify-between items-center px-10 bg-light-background dark:bg-dark-card">
-      <div className="flex items-center gap-4">
+    <div className="sticky top-0 z-50 flex justify-between items-center px-10 bg-light-background dark:bg-dark-card  ">
+      <div className="flex items-center gap-4 ">
         <Link to="">
           <img src={logo} alt="Logo" className="w-16 h-16" />
         </Link>
@@ -86,8 +86,13 @@ const Navbar = () => {
               <BsBell className="text-xl text-gray-400 hover:text-light-button " />
             </Link>
             <Link to="create-post">
-              <button className="p-2 rounded-md border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text">
+              <button className="p-2  hidden md:flex rounded-md border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text">
                 Create Post
+              </button>
+            </Link>
+            <Link to="create-post">
+              <button className="p-2  hidden md:flex rounded-md border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text">
+                Post a Podcast
               </button>
             </Link>
             <div className="relative">
@@ -119,12 +124,12 @@ const Navbar = () => {
         {!user && (
           <>
             <Link to="auth/login">
-              <button className="p-2 rounded-md dark:border-dark-subtext text-light-text hover:text-light-button hover:bg-opacity-10 dark:text-dark-text hover:bg-light-hover  dark:hover:text-dark-button">
+              <button className="p-2 rounded-md hidden md:flex dark:border-dark-subtext text-light-text hover:text-light-button hover:bg-opacity-10 dark:text-dark-text hover:bg-light-hover  dark:hover:text-dark-button">
                 Login
               </button>
             </Link>
             <Link to="auth/register">
-              <button className="p-2 rounded-md border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text">
+              <button className="p-2 rounded-md hidden md:flex border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text">
                 Create Account
               </button>
             </Link>
