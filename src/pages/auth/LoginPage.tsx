@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -49,22 +50,61 @@ const LoginPage = () => {
         navigate("/create-post");
       })
       .catch((error) => {
-        // Handle Errors here.
         const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode);
-        console.log(errorMessage);
+        console.error(errorCode);
 
-        const email = error.customData.email;
-        console.log(email);
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        console.log(credential);
+        const errorMessage = error.message;
+
+        // // Log details for debugging
+        // console.error("Google Sign-In Error:", errorCode, errorMessage);
+        // console.log("Email:", error.customData?.email); // Safe access to email
+        console.log(
+          "Credential:",
+          GoogleAuthProvider.credentialFromError(error)
+        );
+
+        // Use a switch statement for cleaner error handling
+        switch (errorCode) {
+          case "auth/popup-closed-by-user":
+            toast.info("You closed the popup. Please try again."); // Use toast
+            break;
+          case "auth/account-exists-with-different-credential":
+            toast.warning(
+              "You already have an account with this email. Please sign in with that account."
+            ); // More concise message
+            break;
+          case "auth/invalid-credential":
+            toast.error(
+              "Invalid credentials. Please check your email and password."
+            ); // Use toast.error for errors
+            break;
+          case "auth/user-disabled":
+            toast.error(
+              "Your account has been disabled. Please contact support."
+            );
+            break;
+          // Add more specific error cases as needed
+          default:
+            toast.error(`An unexpected error occurred: ${errorMessage}`); // Generic message for unknown errors
+        }
       });
   };
   return (
     <div className="px-10 h-screen w-screen">
       <div className="flex flex-col justify-center items-center h-full ">
-        <div className="rounded-md  md:w-[500px] p-10 bg-light-background dark:text-dark-text text-light-text  dark:bg-dark-card">
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        <div className="rounded-md w-[350px] md:w-[500px] p-10 bg-light-background2 dark:text-dark-text text-light-text  dark:bg-dark-card">
           <h1 className="text-3xl text-center  mb-2 ">Login</h1>
           <div className="flex flex-col p-2 mb-2">
             <form className="flex flex-col gap-4">

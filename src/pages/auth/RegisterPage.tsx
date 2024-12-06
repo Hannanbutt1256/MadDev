@@ -49,8 +49,8 @@ const RegisterPage = () => {
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(errorCode);
-        console.log(errorMessage);
+        alert(errorCode);
+        alert(errorMessage);
 
         const email = error.customData.email;
         console.log(email);
@@ -62,7 +62,7 @@ const RegisterPage = () => {
   return (
     <div className="px-10 h-full w-screen mt-4">
       <div className="flex flex-col justify-center items-center h-full ">
-        <div className="rounded-md  md:w-[500px] p-10 bg-light-background text-light-text dark:text-dark-text dark:bg-dark-card">
+        <div className="rounded-md w-[350px] md:w-[500px] p-10 bg-light-background2 text-light-text dark:text-dark-text dark:bg-dark-card">
           <h1 className="text-3xl text-center text-light-text mb-2 dark:text-dark-text ">
             Create an account
           </h1>
