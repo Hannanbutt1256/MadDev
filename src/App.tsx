@@ -5,7 +5,7 @@ import Sidebar from "./components/Sidebar";
 
 function App() {
   return (
-    <div className="bg-light-background2 dark:bg-dark-background text-light-text dark:text-dark-text ">
+    <div className="bg-light-background2 dark:bg-black text-light-text dark:text-dark-text ">
       <Navbar />
       <div className="flex">
         <Sidebar />
