@@ -5,4 +5,5 @@ export interface UserProfileInterface {
   profilePicture?: string;
   followers: string[];
   following: string[];
+  bookmarkedPosts: string[];
 }
