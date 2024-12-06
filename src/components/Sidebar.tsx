@@ -10,9 +10,13 @@ import logo from "../assets/logo.png";
 import { useState, useEffect } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../utils/firebase";
+import { Link } from "react-router-dom";
 const Sidebar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const [user] = useAuthState(auth);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -31,13 +35,13 @@ const Sidebar = () => {
   return (
     <>
       <div>
-        <button onClick={toggleMenu} className="md:hidden pl-10 mt-4">
+        <button onClick={toggleMenu} className="md:hidden pl-2 mt-4">
           {!isMenuOpen && (
-            <AiOutlineMenu className="text-2xl  text-light-text dark:text-dark-text" />
+            <AiOutlineMenu className="text-2xl text-light-text dark:text-dark-text" />
           )}
         </button>
       </div>
-      <div className=" h-screen rounded-md bg-light-background dark:bg-black  text-dark-text ">
+      <div className=" md:h-screen rounded-md bg-light-background dark:bg-black  text-dark-text ">
         <div className=" hidden   mt-4 md:flex md:flex-col  ">
           <button
             className="py-2 pl-10 pr-20 flex items-center gap-2 text-xl rounded-md  dark:hover:bg-dark-hover3 dark:hover:text-dark-text2 dark:hover:opacity-75 dark:text-dark-text hover:bg-light-hover hover:bg-opacity-10 hover:text-light-button text-light-text"
@@ -169,6 +173,48 @@ const Sidebar = () => {
               <HiOutlinePhone className="text-xl" />
               Contact
             </button>
+            {user && (
+              <>
+                <button
+                  className="p-2  md:flex rounded-md border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text"
+                  onClick={async () => {
+                    await navigate("/create-post");
+                    toggleMenu();
+                  }}
+                >
+                  Create Post
+                </button>
+                <button
+                  className="p-2 mt-2  md:flex rounded-md border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text"
+                  onClick={async () => {
+                    await navigate("/create-post");
+                    toggleMenu();
+                  }}
+                >
+                  Post a Podcast
+                </button>
+              </>
+            )}
+            {!user && (
+              <>
+                <Link to="auth/login">
+                  <button
+                    className="p-2 rounded-md dark:border-dark-subtext text-light-text hover:text-light-button hover:bg-opacity-10 dark:text-dark-text hover:bg-light-hover  dark:hover:text-dark-button"
+                    onClick={toggleMenu}
+                  >
+                    Login
+                  </button>
+                </Link>
+                <Link to="auth/register">
+                  <button
+                    className="p-2 rounded-md border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text"
+                    onClick={toggleMenu}
+                  >
+                    Create Account
+                  </button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
