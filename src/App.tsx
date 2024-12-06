@@ -7,7 +7,7 @@ function App() {
   return (
     <div className="bg-light-background dark:bg-black text-light-text dark:text-dark-text ">
       <Navbar />
-      <div className="md:flex ">
+      <div className="md:flex md:ml-4 md:mt-4 ">
         <Sidebar />
         <Outlet />
       </div>
