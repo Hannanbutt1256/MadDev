@@ -2,7 +2,7 @@ import Tabs from "../components/Tabs";
 
 const HomePage = () => {
   return (
-    <div className="h-screen">
+    <div className="min-h-screen">
       <Tabs />
     </div>
   );
