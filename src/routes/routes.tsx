@@ -16,10 +16,17 @@ import ProfilePage from "../pages/ProfilePage";
 import NotificationPage from "../pages/NotificationPage";
 import SubscriptionPage from "../pages/SubscriptionPage";
 import CreatePodcastsPage from "../pages/CreatePodcastsPage";
+import Tabs from "../components/Tabs";
+import FollowedPage from "../pages/FollowedPage";
+import DiscoverPage from "../pages/DiscoverPage";
 
 const routes = createRoutesFromElements(
   <Route path="/" element={<App />}>
     <Route index element={<HomePage />} />
+    <Route path="/" element={<Tabs />}>
+      <Route path="discover" element={<DiscoverPage />} />
+      <Route path="following" element={<FollowedPage />} />
+    </Route>
     <Route path="auth/login" element={<LoginPage />} />
     <Route path="auth/register" element={<RegisterPage />} />
     <Route path="create-post" element={<CreatePostPage />} />
