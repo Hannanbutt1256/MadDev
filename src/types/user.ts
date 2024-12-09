@@ -3,6 +3,7 @@ export interface UserProfileInterface {
   username: string;
   email: string;
   profilePicture?: string;
+  bio?: string;
   followers: string[];
   following: string[];
   bookmarkedPosts: string[];
