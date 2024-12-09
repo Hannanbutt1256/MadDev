@@ -12,6 +12,8 @@ import { LoginInterface } from "../../types/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { auth, provider } from "../../utils/firebase";
 import { useNavigate } from "react-router-dom";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../utils/firebase";
 const LoginPage = () => {
   const navigate = useNavigate();
   //Login with Firebase
@@ -40,11 +42,21 @@ const LoginPage = () => {
   //Firbase Login for Google
   const handleGoogleSignIn = async () => {
     await signInWithPopup(auth, provider)
-      .then((result) => {
+      .then(async (result) => {
         GoogleAuthProvider.credentialFromResult(result);
         // const token = credential?.accessToken;
         // console.log(token);
         const user = result.user;
+        await setDoc(doc(db, "UserProfile", user.uid), {
+          id: user.uid,
+          username: "",
+          email: user.email,
+          profilePicture: user.photoURL,
+          bio: "",
+          following: [],
+          followers: [],
+          bookmarkedPosts: [],
+        });
         console.log(user);
         alert("user is registered");
         navigate("/create-post");

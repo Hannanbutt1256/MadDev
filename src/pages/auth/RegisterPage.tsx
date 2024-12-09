@@ -7,7 +7,8 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
-import { auth, provider } from "../../utils/firebase";
+import { setDoc, doc } from "firebase/firestore";
+import { auth, provider, db } from "../../utils/firebase";
 import { useNavigate, Link } from "react-router-dom";
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -23,8 +24,18 @@ const RegisterPage = () => {
     console.log(data);
     //Firebase Auth
     await createUserWithEmailAndPassword(auth, data.email, data.password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         const user = userCredential.user;
+        await setDoc(doc(db, "UserProfile", user.uid), {
+          id: user.uid,
+          username: "",
+          email: user.email,
+          profilePicture: "",
+          bio: "",
+          following: [],
+          followers: [],
+          bookmarkedPosts: [],
+        });
         console.log("User created successfully:", user);
         alert("User created successfully");
         navigate("/create-post");
@@ -36,11 +47,22 @@ const RegisterPage = () => {
   //Google Auth by Firebase
   const handleGoogleSignIn = async () => {
     await signInWithPopup(auth, provider)
-      .then((result) => {
+      .then(async (result) => {
         GoogleAuthProvider.credentialFromResult(result);
         // const token = credential?.accessToken;
         // console.log(token);
         const user = result.user;
+        await setDoc(doc(db, "UserProfile", user.uid), {
+          id: user.uid,
+          username: "",
+          email: user.email,
+          profilePicture: user.photoURL,
+          bio: "",
+          following: [],
+          followers: [],
+          bookmarkedPosts: [],
+        });
+
         console.log(user);
         alert("user is registered");
         navigate("/create-post");
