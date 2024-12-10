@@ -117,12 +117,12 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="p-4">
+    <div>
       {Profileuser ? (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium">Profile Image</label>
-            <div className="flex items-center space-x-4">
+            <div className="md:flex  items-center space-x-4">
               <img
                 src={profileImageUrl}
                 alt="Profile"
@@ -132,6 +132,7 @@ const ProfilePage = () => {
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
+                className="block w-full text-sm border border-light-button text-light-button   dark:border-dark-button dark:text-dark-button   file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-light-button file:text-light-background hover:file:bg-light-hover hover:file:text-light-background dark:file:bg-dark-button dark:file:text-dark-text dark:hover:file:bg-dark-hover2 dark:hover:file:text-dark-text rounded-lg focus:outline-none"
               />
             </div>
           </div>
@@ -168,7 +169,7 @@ const ProfilePage = () => {
 
           <button
             type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className=" border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text px-4 py-2 rounded "
           >
             Update Profile
           </button>
