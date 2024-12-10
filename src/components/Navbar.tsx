@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { auth } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { RootState, AppDispatch } from "../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUserProfile } from "../store/user/userProfileSlice";
@@ -16,7 +16,8 @@ const Navbar = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [user] = useAuthState(auth);
-  const [isSearchVisible, setIsSearchVisible] = useState(false); // State for search bar visibility
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (user) {
       dispatch(fetchUserProfile(user.uid));
@@ -35,7 +36,24 @@ const Navbar = () => {
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
 
+    // Add event listener when the component mounts
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
   const toggleSearchVisibility = () => {
     setIsSearchVisible((prev) => !prev);
   };
@@ -112,19 +130,22 @@ const Navbar = () => {
                 onClick={toggleDropdown}
               />
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-light-background dark:bg-dark-card shadow-lg rounded-md py-2">
-                  <Link
-                    to="/profile"
-                    className="block px-4 py-2 text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover"
-                  >
-                    Profile
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover"
-                  >
-                    Logout
-                  </button>
+                <div ref={dropdownRef} className="dropdown">
+                  <div className="absolute right-0 mt-2 w-48 bg-light-background dark:bg-dark-card shadow-lg rounded-md py-2">
+                    <Link
+                      to="/profile"
+                      onClick={toggleDropdown}
+                      className="block px-4 py-2 text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover"
+                    >
+                      Profile
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover"
+                    >
+                      Logout
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
