@@ -14,8 +14,13 @@ import { auth, provider } from "../../utils/firebase";
 import { useNavigate } from "react-router-dom";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../utils/firebase";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+
 const LoginPage = () => {
   const navigate = useNavigate();
+
+  const { Profileuser } = useSelector((state: RootState) => state.userProfile);
   //Login with Firebase
   const {
     register,
@@ -49,13 +54,13 @@ const LoginPage = () => {
         const user = result.user;
         await setDoc(doc(db, "UserProfile", user.uid), {
           id: user.uid,
-          username: "",
+          username: Profileuser?.username,
           email: user.email,
           profilePicture: user.photoURL,
-          bio: "",
-          following: [],
-          followers: [],
-          bookmarkedPosts: [],
+          bio: Profileuser?.bio,
+          following: Profileuser?.following,
+          followers: Profileuser?.followers,
+          bookmarkedPosts: Profileuser?.bookmarkedPosts,
         });
         console.log(user);
         alert("user is registered");
