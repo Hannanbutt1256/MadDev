@@ -5,14 +5,23 @@ import { Link } from "react-router-dom";
 import { auth } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { RootState, AppDispatch } from "../store/store";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchUserProfile } from "../store/user/userProfileSlice";
 
 const Navbar = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { Profileuser } = useSelector((state: RootState) => state.userProfile);
   const { isDarkMode, toggleTheme } = useTheme();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [user] = useAuthState(auth);
   const [isSearchVisible, setIsSearchVisible] = useState(false); // State for search bar visibility
-
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchUserProfile(user.uid));
+    }
+  }, [user, dispatch]);
   const handleLogout = async () => {
     try {
       await signOut(auth); // Logs out the user
@@ -97,7 +106,7 @@ const Navbar = () => {
             </Link>
             <div className="relative">
               <img
-                src={user.photoURL || "/src/assets/no-pf.svg"}
+                src={Profileuser?.profilePicture || "/src/assets/no-pf.svg"}
                 alt="Profile"
                 className="w-10 h-10 rounded-full cursor-pointer"
                 onClick={toggleDropdown}
