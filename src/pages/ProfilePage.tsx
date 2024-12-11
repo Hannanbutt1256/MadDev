@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchUserProfile,
-  updateUserProfile,
-} from "../store/user/userProfileSlice";
+import { fetchUserProfile, updateUserProfile } from "../store/user/userThunks";
 import { RootState, AppDispatch } from "../store/store";
 import { auth } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-const CLOUDINARY_UPLOAD_URL =
-  "https://api.cloudinary.com/v1_1/docyx1r6s/image/upload";
+const CLOUDINARY_UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 const ProfilePage = () => {
   const dispatch = useDispatch<AppDispatch>();
