@@ -8,7 +8,7 @@ import { signOut } from "firebase/auth";
 import { useState, useEffect, useRef } from "react";
 import { RootState, AppDispatch } from "../store/store";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchUserProfile } from "../store/user/userProfileSlice";
+import { fetchUserProfile } from "../store/user/userThunks";
 
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
