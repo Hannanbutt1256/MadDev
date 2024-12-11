@@ -1,5 +1,16 @@
+import ListUser from "../components/ListUser";
+import { UserProfileInterface } from "../types/user";
 const FollowedPage = () => {
-  return <div className="h-full m-2 p-2">FollowedPage</div>;
+  // const { userfollowing, isUserFollowing } = useState(false);
+  const isUserFollowing = (user: UserProfileInterface): boolean => {
+    return user.following.length === 0;
+  };
+  return (
+    <>
+      {!isUserFollowing && <ListUser />}
+      <div></div>
+    </>
+  );
 };
 
 export default FollowedPage;
