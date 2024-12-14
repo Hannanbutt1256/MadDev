@@ -82,7 +82,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
           {/* Bookmark Button */}
           <button
             onClick={handleBookmark}
-            className="flex items-center text-gray-600 hover:text-yellow-500 transition"
+            className="flex  items-center text-gray-600 hover:text-yellow-500 transition"
           >
             {bookmarked ? (
               <BsBookmarkFill className="w-5 h-5 text-yellow-500" />
