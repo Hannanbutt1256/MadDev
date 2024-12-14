@@ -19,7 +19,7 @@ import CreatePodcastsPage from "../pages/CreatePodcastsPage";
 import Tabs from "../components/Tabs";
 import FollowedPage from "../pages/FollowedPage";
 import DiscoverPage from "../pages/DiscoverPage";
-
+import PostViewer from "../pages/PostViewer";
 const routes = createRoutesFromElements(
   <Route path="/" element={<App />}>
     <Route index element={<HomePage />} />
@@ -27,6 +27,7 @@ const routes = createRoutesFromElements(
       <Route path="discover" element={<DiscoverPage />} />
       <Route path="following" element={<FollowedPage />} />
     </Route>
+    <Route path="preview" element={<PostViewer />} />
     <Route path="auth/login" element={<LoginPage />} />
     <Route path="auth/register" element={<RegisterPage />} />
     <Route path="create-post" element={<CreatePostPage />} />
