@@ -9,7 +9,6 @@ import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { ImageNode } from "../components/Editor/nodes/ImageNode";
 import { YoutubeNode } from "../components/Editor/nodes/YoutubeNode";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
-import { $getRoot, $isParagraphNode, LexicalEditor } from "lexical";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 
@@ -73,13 +72,28 @@ const ContentRenderer = ({
         editor.setEditorState(editorState);
 
         // Call transformNodes after setting editor state
-        transformNodes(editor);
+        // transformNodes(editor);
       });
     });
   }, [editor, serializedContent]);
+  const savedData = JSON.parse(localStorage.getItem("editPageData") || "{}");
 
   return (
     <div className="bg-light-background2 dark:bg-dark-card u p-4 rounded-md">
+      <img src={savedData.coverImage} className="w-full h-96" alt="" />
+      <h1 className="text-5xl font-bold mb-4">{savedData.title}</h1>
+      <p className="text-lg mb-4 rounded-md space-x-2 ">
+        {savedData.tags?.map((tag: string, index: number) => {
+          return (
+            <span
+              key={index}
+              className="px-3 py-1  bg-light-button text-light-background dark:bg-dark-button dark:text-dark-text rounded-full"
+            >
+              {tag}
+            </span>
+          );
+        })}
+      </p>
       <RichTextPlugin
         contentEditable={<ContentEditable className="content-editable" />}
         placeholder={null}
@@ -89,26 +103,26 @@ const ContentRenderer = ({
   );
 };
 
-function transformNodes(editor: LexicalEditor) {
-  editor.update(() => {
-    const root = $getRoot();
-    console.log("Root Node:", root);
+// function transformNodes(editor: LexicalEditor) {
+//   editor.update(() => {
+//     const root = $getRoot();
+//     console.log("Root Node:", root);
 
-    root.getChildren().forEach((node) => {
-      console.log("Child Node Type:", node.getType());
+//     root.getChildren().forEach((node) => {
+//       console.log("Child Node Type:", node.getType());
 
-      if ($isParagraphNode(node)) {
-        node.getChildren().forEach((child) => {
-          console.log("Paragraph Child Node Type:", child.getType());
+//       if ($isParagraphNode(node)) {
+//         node.getChildren().forEach((child) => {
+//           console.log("Paragraph Child Node Type:", child.getType());
 
-          if (child.getType() === "youtube") {
-            console.log("YouTube node found:", child);
-          }
-        });
-      }
-    });
-  });
-}
+//           if (child.getType() === "youtube") {
+//             console.log("YouTube node found:", child);
+//           }
+//         });
+//       }
+//     });
+//   });
+// }
 
 // Transform function to move youtube nodes out of paragraph nodes
 
