@@ -34,7 +34,7 @@ export const theme = {
     underline: "underline",
     underlineStrikethrough: "editor-textUnderlineStrikethrough",
   },
-  code: "bg-gray-100 dark:bg-black font-mono block p-2 pl-14 leading-6 text-xs m-0 mt-2 mb-2 tab-[2] overflow-x-auto relative",
+  code: "bg-gray-100 dark:bg-black font-mono block p-2 pl-14 leading-6 text-xs m-0 mt-2 mb-2 tab-[2] ",
   codeHighlight: {
     atrule: "text-purple-600 font-bold",
     attr: "text-pink-500",
