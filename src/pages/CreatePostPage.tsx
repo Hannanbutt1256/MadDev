@@ -1,18 +1,8 @@
-import Editor from "../components/Editor/Editor";
-import { useNavigate } from "react-router-dom";
-
+import PostTabs from "../components/PostTabs";
 const CreatePostPage = () => {
-  const navigate = useNavigate();
   return (
-    <div className="w-full h-screen">
-      <Editor />
-      <button
-        onClick={() => {
-          navigate("/preview");
-        }}
-      >
-        Preview
-      </button>
+    <div>
+      <PostTabs />
     </div>
   );
 };
