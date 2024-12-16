@@ -5,6 +5,9 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import { $createImageNode } from "../nodes/ImageNode";
 import { $insertNodes } from "lexical";
 
+const CloudinaryUrl = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
+const CloudinaryUploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET1;
+
 export default function ImagePlugin() {
   const [isOpen, setIsOpen] = useState(false);
   const [url, setURL] = useState("");
@@ -13,16 +16,57 @@ export default function ImagePlugin() {
 
   const [editor] = useLexicalComposerContext();
 
-  const onAddImage = () => {
+  const uploadToCloudinary = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CloudinaryUploadPreset); // Replace with your Cloudinary upload preset.
+
+    try {
+      const response = await fetch(
+        CloudinaryUrl, // Replace with your Cloudinary cloud name.
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image");
+      }
+
+      const data = await response.json();
+      return data.secure_url; // URL of the uploaded image.
+    } catch (error) {
+      console.error("Error uploading to Cloudinary:", error);
+      throw error;
+    }
+  };
+
+  const onAddImage = async () => {
     let src = "";
-    if (url) src = url;
-    if (file) src = URL.createObjectURL(file);
+
+    if (file) {
+      try {
+        src = await uploadToCloudinary(file); // Upload the file to Cloudinary.
+      } catch (error) {
+        console.error("Error adding image:", error);
+        return;
+      }
+    } else if (url) {
+      src = url;
+    }
+
     console.log("Adding image with src:", src); // Debug log
 
     editor.update(() => {
-      const node = $createImageNode({ src, altText: "Dummy text" });
+      const node = $createImageNode({
+        src,
+        altText: "Uploaded Image",
+        maxWidth: 400,
+      });
       $insertNodes([node]);
     });
+
     setFile(undefined);
     setURL("");
     setIsOpen(false);
