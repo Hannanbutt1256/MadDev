@@ -1,24 +1,14 @@
 import { BlogCardProps } from "../types/BlogCardProps";
-import { AiOutlineHeart, AiFillHeart } from "react-icons/ai"; // Like icon
-import { FaRegCommentDots } from "react-icons/fa"; // Comments icon
-import { BsBookmark, BsBookmarkFill } from "react-icons/bs"; // Bookmark icon
-import { useState } from "react";
+
 const BlogCard: React.FC<BlogCardProps> = ({
   title,
-  description,
   author,
   createdAt,
   tags = [],
   coverImage,
 }) => {
-  const [liked, setLiked] = useState(false);
-  const [bookmarked, setBookmarked] = useState(false);
-
-  const handleLike = () => setLiked(!liked);
-  const handleBookmark = () => setBookmarked(!bookmarked);
-
   return (
-    <div className="max-w-sm bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="max-w-sm bg-white dark:bg-dark-card  rounded-lg shadow-md overflow-hidden">
       {/* Cover Image */}
       {coverImage && (
         <img
@@ -31,15 +21,15 @@ const BlogCard: React.FC<BlogCardProps> = ({
       {/* Blog Content */}
       <div className="p-4">
         {/* Title */}
-        <h2 className="text-xl font-bold text-gray-800 mb-2 truncate">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-dark-text mb-2 truncate">
           {title}
         </h2>
 
         {/* Description */}
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3">{description}</p>
+        {/* <p className="text-gray-600 text-sm mb-4 line-clamp-3">{description}</p> */}
 
         {/* Author & Date */}
-        <div className="text-gray-500 text-xs flex justify-between">
+        <div className="text-gray-500 dark:text-dark-text text-xs flex justify-between">
           <span>By {author}</span>
           <span>{new Date(createdAt).toLocaleDateString()}</span>
         </div>
@@ -50,7 +40,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
             {tags.map((tag, idx) => (
               <span
                 key={idx}
-                className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded-full"
+                className="text-xs bg-light-button text-light-background dark:bg-dark-button dark:text-dark-text px-2 py-1 rounded-full"
               >
                 {tag}
               </span>
@@ -59,41 +49,40 @@ const BlogCard: React.FC<BlogCardProps> = ({
         )}
 
         {/* Action Buttons */}
-        <div className="mt-4 flex items-center justify-between">
-          {/* Like Button */}
-          <button
+        {/* <div className="mt-4 flex items-center justify-between"> */}
+        {/* Like Button */}
+        {/* <button
             onClick={handleLike}
-            className="flex items-center text-gray-600 hover:text-red-500 transition"
+            className="flex items-center text-gray-600 dark:text-dark-text hover:text-red-500 transition"
           >
             {liked ? (
               <AiFillHeart className="w-5 h-5 text-red-500" />
             ) : (
               <AiOutlineHeart className="w-5 h-5" />
             )}
-            {/* <span className="ml-1 text-sm">{liked ? "Liked" : "Like"}</span> */}
-          </button>
+            <span className="ml-1 text-sm">{liked ? "Liked" : "Like"}</span>
+          </button> */}
 
-          {/* Comments Button */}
-          <button className="flex items-center text-gray-600 hover:text-blue-500 transition">
-            <FaRegCommentDots className="w-5 h-5" />
-            {/* <span className="ml-1 text-sm">Comments</span> */}
-          </button>
+        {/* Comments Button */}
+        {/* <button className="flex items-center text-gray-600 dark:text-dark-text hover:text-blue-500 transition">
+            <FaRegCommentDots className="w-5 h-5" /> */}
+        {/* <span className="ml-1 text-sm">Comments</span> */}
+        {/* </button> */}
 
-          {/* Bookmark Button */}
-          <button
+        {/* Bookmark Button */}
+        {/* <button
             onClick={handleBookmark}
-            className="flex  items-center text-gray-600 hover:text-yellow-500 transition"
+            className="flex  items-center text-gray-600 dark:text-dark-text hover:text-yellow-500 transition"
           >
             {bookmarked ? (
               <BsBookmarkFill className="w-5 h-5 text-yellow-500" />
             ) : (
               <BsBookmark className="w-5 h-5" />
-            )}
-            {/* <span className="ml-1 text-sm">
+            )} */}
+        {/* <span className="ml-1 text-sm">
               {bookmarked ? "Bookmarked" : "Bookmark"}
             </span> */}
-          </button>
-        </div>
+        {/* </button> */}
       </div>
     </div>
   );
