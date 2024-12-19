@@ -49,8 +49,8 @@ const ListUser = () => {
 
   return (
     <div className="h-full m-2 p-2">
-      <h1 className="text-2xl font-bold mb-4">Suggestions</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <h1 className="text-2xl font-bold mb-4">Users</h1>
+      <div className="grid grid-cols-1">
         {allUsers.map((user) => (
           <div
             key={user.id}
