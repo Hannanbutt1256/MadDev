@@ -1,5 +1,11 @@
+import AddPodcastForm from "../components/AddPodcastForm";
+
 const CreatePodcastsPage = () => {
-  return <div>CreatePodcastsPage</div>;
+  return (
+    <div>
+      <AddPodcastForm />
+    </div>
+  );
 };
 
 export default CreatePodcastsPage;
