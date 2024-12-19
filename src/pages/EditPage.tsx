@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import Editor from "../components/Editor/Editor";
 import { ThreeDots } from "react-loader-spinner";
+import { useDispatch } from "react-redux";
+import { addBlogPost } from "../store/posts/postThunks";
+import { useGetPostDataFromLocalStorage } from "../utils/postCombine";
+import { AppDispatch } from "../store/store";
+import { useNavigate } from "react-router-dom";
 
 const EditPage = () => {
   const predefinedTags = [
@@ -330,6 +335,7 @@ const EditPage = () => {
     "Cloud Computing",
     "Version Control",
   ];
+  const navigate = useNavigate();
   const CloudinaryUrl = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
   const CloudinaryUploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET1;
   const savedData = JSON.parse(localStorage.getItem("editPageData") || "{}");
@@ -344,8 +350,7 @@ const EditPage = () => {
     savedData.coverImage || null
   );
   const inputRef = useRef<HTMLDivElement | null>(null);
-
-  // Filter tags based on search term
+  const dispatch = useDispatch<AppDispatch>();
   const filteredTags = predefinedTags.filter((tag) =>
     tag.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -403,17 +408,19 @@ const EditPage = () => {
       }
     }
   };
+  const postData = useGetPostDataFromLocalStorage();
 
-  const handleFormSubmit = () => {
-    const data = {
-      title,
-      tags: selectedTags,
-      coverImage, // Save the full URL instead of name
-    };
-    localStorage.setItem("editPageData", JSON.stringify(data));
-    alert("Data saved to localStorage!");
+  const handleFormSubmit = async () => {
+    if (postData) {
+      await dispatch(addBlogPost(postData));
+      localStorage.removeItem("editPageData");
+      localStorage.removeItem("editorContent");
+      localStorage.removeItem("blogPosts");
+      navigate("/");
+    } else {
+      alert("Failed to retrieve post data from localStorage.");
+    }
   };
-
   // Save data to localStorage when inputs change
   useEffect(() => {
     const data = {
@@ -523,7 +530,7 @@ const EditPage = () => {
       <div className="mx-8 m-2 flex justify-end">
         <button
           onClick={handleFormSubmit}
-          className="p-2 mb-10 px-4 text-xl font-bold rounded-md hidden md:flex border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text"
+          className="p-2 mb-10 px-4 text-xl font-bold rounded-md  md:flex border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text"
         >
           Submit
         </button>
