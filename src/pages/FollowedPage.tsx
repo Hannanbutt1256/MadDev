@@ -14,7 +14,6 @@ const FollowedPage = () => {
           <BlogCard
             key={"1"}
             title={"React 18 Features You Should Know"}
-            description={"An overview of the exciting features in React 18."}
             author={"John Doe"}
             createdAt={"2024-12-01T12:00:00Z"}
             tags={["React", "JavaScript", "Web Development"]}
