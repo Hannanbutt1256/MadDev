@@ -2,7 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { podcastSchema, PodcastSchemaType } from "../validation/podcastSchema";
-
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store/store";
+import { addPodcast } from "../store/podcast/podcastThunks";
+import { PodcastInterface } from "../types/podcast";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../utils/firebase";
 // Assuming you have this array defined somewhere
 const predefinedTags = [
   "React",
@@ -332,11 +337,153 @@ const predefinedTags = [
   "Version Control",
 ];
 
-const AddPodcastForm = () => {
+const AddPodcastForm: React.FC<PodcastInterface> = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [authUser] = useAuthState(auth);
+  const authorId = authUser?.uid;
+
+  const CloudinaryUrl = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
+  const CloudinaryUrl1 = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL1;
+  const CloudinaryUploadPreset1 = import.meta.env
+    .VITE_CLOUDINARY_UPLOAD_PRESET1;
+  const CloudinaryUploadPreset2 = import.meta.env
+    .VITE_CLOUDINARY_UPLOAD_PRESET2;
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [showTags, setShowTags] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const inputRef = useRef<HTMLDivElement | null>(null);
+  const [coverImageUrl, setCoverImageUrl] = useState<string>("");
+  const [audioUrl, setAudioUrl] = useState<string>("");
+  const [audioLoading, setAudioLoading] = useState(false);
+  const [loading, setIsLoading] = useState(false);
+  const [audioDuration, setAudioDuration] = useState<number | null>(null);
+
+  const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+  const MAX_AUDIO_SIZE = 100 * 1024 * 1024;
+  const ACCEPTED_IMAGE_TYPES = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+  ];
+  const ACCEPTED_AUDIO_TYPES = ["audio/mpeg", "audio/wav", "audio/mp3"];
+  const handleCoverImageChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (!e.target.files || !e.target.files[0]) {
+      return;
+    }
+
+    const file = e.target.files[0];
+
+    // Validate file type
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      alert("Please select a JPEG or PNG image file.");
+      e.target.value = "";
+      return;
+    }
+
+    // Validate file size
+    if (file.size > MAX_IMAGE_SIZE) {
+      alert("Image file size must be less than 5MB.");
+      e.target.value = "";
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CloudinaryUploadPreset1);
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(CloudinaryUrl, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+
+      if (data.secure_url) {
+        setCoverImageUrl(data.secure_url);
+        alert("Image uploaded successfully!");
+      } else {
+        throw new Error("No secure URL in response");
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Error uploading image. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleAudioChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || !e.target.files[0]) {
+      return;
+    }
+
+    const file = e.target.files[0];
+
+    // Validate file type
+    if (!ACCEPTED_AUDIO_TYPES.includes(file.type)) {
+      alert("Please select a valid audio file (MP3 or WAV).");
+      e.target.value = "";
+      return;
+    }
+
+    // Validate file size
+    if (file.size > MAX_AUDIO_SIZE) {
+      alert("Audio file size must be less than 100MB.");
+      e.target.value = "";
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CloudinaryUploadPreset2);
+
+    setAudioLoading(true);
+
+    try {
+      const response = await fetch(CloudinaryUrl1, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+
+      if (data.secure_url) {
+        setAudioUrl(data.secure_url);
+
+        // Extract duration using the HTMLAudioElement
+        const audio = new Audio();
+        audio.src = data.secure_url;
+        audio.addEventListener("loadedmetadata", () => {
+          setAudioDuration(audio.duration);
+          alert(
+            `Audio uploaded successfully! Duration: ${audio.duration.toFixed(
+              2
+            )} seconds`
+          );
+        });
+      } else {
+        throw new Error("No secure URL in response");
+      }
+    } catch (error) {
+      console.error("Error uploading audio:", error);
+      alert("Error uploading audio. Please try again.");
+    } finally {
+      setAudioLoading(false);
+    }
+  };
 
   const {
     register,
@@ -347,15 +494,45 @@ const AddPodcastForm = () => {
     resolver: zodResolver(podcastSchema),
   });
 
-  // Update tags in form data whenever selectedTags changes
   useEffect(() => {
     setValue("tags", selectedTags);
   }, [selectedTags, setValue]);
 
   const onSubmit: SubmitHandler<PodcastSchemaType> = (data) => {
-    console.log(data); // Handle form data here
+    // Validate that files were uploaded
+    if (!coverImageUrl) {
+      alert("Please upload a cover image");
+      return;
+    }
+
+    if (!audioUrl) {
+      alert("Please upload an audio file");
+      return;
+    }
+    if (!audioDuration) {
+      alert("Unable to retrieve audio duration. Please try again.");
+      return;
+    }
+
+    // Create the complete form data
+    const formDataWithFiles = {
+      id: "",
+      title: data.title,
+      description: data.description,
+      tags: data.tags,
+      coverImage: coverImageUrl,
+      audio: audioUrl,
+      duration: audioDuration,
+      authorId: authorId,
+      createdAt: new Date(),
+    };
+
+    console.log(formDataWithFiles);
+    dispatch(addPodcast(formDataWithFiles));
+    // Handle your form submission here
   };
 
+  // Rest of the component remains the same...
   const filteredTags = predefinedTags.filter((tag) =>
     tag.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -473,16 +650,13 @@ const AddPodcastForm = () => {
             Upload Cover Image
           </label>
           <input
-            {...register("coverImage")}
+            onChange={handleCoverImageChange}
             type="file"
             accept="image/*"
             className="mx-8 m-2 block w-64 text-sm border border-light-button text-light-button dark:border-dark-button dark:text-dark-button file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-light-button file:text-light-background hover:file:bg-light-hover hover:file:text-light-background dark:file:bg-dark-button dark:file:text-dark-text dark:hover:file:bg-dark-hover2 dark:hover:file:text-dark-text rounded-lg focus:outline-none"
           />
-          {errors.coverImage && (
-            <p className="text-red-500 mx-8 mt-1 text-sm">
-              {errors.coverImage.message}
-            </p>
-          )}
+
+          {loading && <p className="mx-8 mt-1 text-sm">Uploading image...</p>}
         </div>
 
         <div className="relative mb-4">
@@ -490,19 +664,18 @@ const AddPodcastForm = () => {
             Upload Audio
           </label>
           <input
-            {...register("audio")}
+            onChange={handleAudioChange}
             type="file"
             accept="audio/*"
             className="mx-8 m-2 block w-64 text-sm border border-light-button text-light-button dark:border-dark-button dark:text-dark-button file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-light-button file:text-light-background hover:file:bg-light-hover hover:file:text-light-background dark:file:bg-dark-button dark:file:text-dark-text dark:hover:file:bg-dark-hover2 dark:hover:file:text-dark-text rounded-lg focus:outline-none"
           />
-          {errors.audio && (
-            <p className="text-red-500 mx-8 mt-1 text-sm">
-              {errors.audio.message}
-            </p>
+
+          {audioLoading && (
+            <p className="mx-8 mt-1 text-sm">Uploading audio...</p>
           )}
         </div>
 
-        <div className="relative mb-4">
+        {/* <div className="relative mb-4">
           <input
             {...register("duration")}
             type="text"
@@ -514,13 +687,14 @@ const AddPodcastForm = () => {
               {errors.duration.message}
             </p>
           )}
-        </div>
+        </div> */}
 
         <button
           onClick={handleSubmit(onSubmit)}
-          className="p-2 mx-8 m-2 text-xl font-bold rounded-md border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text"
+          disabled={loading}
+          className="p-2 mx-8 m-2 text-xl font-bold rounded-md border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Upload Podcast
+          {loading ? "Uploading..." : "Upload Podcast"}
         </button>
       </div>
     </div>
