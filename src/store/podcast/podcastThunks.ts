@@ -1,5 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { PodcastInterface } from "../../types/podcast";
 import { db } from "../../utils/firebase";
@@ -12,13 +18,22 @@ export const fetchPodcasts = createAsyncThunk<
 >("podcast/fetchPodcasts", async (_, { rejectWithValue }) => {
   try {
     const querySnapshot = await getDocs(collection(db, "podcasts"));
-    const podcasts: PodcastInterface[] = [];
-    querySnapshot.forEach((docSnapshot) => {
-      podcasts.push({
-        id: docSnapshot.id,
-        ...docSnapshot.data(),
-      } as PodcastInterface);
-    });
+
+    const podcasts: PodcastInterface[] = await Promise.all(
+      querySnapshot.docs.map(async (docSnapshot) => {
+        const data = docSnapshot.data();
+
+        // Update document with its ID
+        await updateDoc(docSnapshot.ref, { id: docSnapshot.id });
+
+        return {
+          id: docSnapshot.id,
+          ...data,
+          createdAt: data.createdAt.toDate(),
+        } as PodcastInterface;
+      })
+    );
+
     return podcasts;
   } catch (error) {
     if (error instanceof Error) {
@@ -44,7 +59,7 @@ export const addPodcast = createAsyncThunk<
     const docRef = await addDoc(collection(db, "podcasts"), {
       ...newPodcast,
       authorId: user.uid, // Include authorId from the authenticated user
-      createdAt: new Date(),
+      createdAt: serverTimestamp(),
     });
 
     return { ...newPodcast, id: docRef.id }; // Return the new podcast with the generated ID

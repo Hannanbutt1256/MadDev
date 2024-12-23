@@ -7,5 +7,5 @@ export interface PodcastInterface {
   coverImage: string; // Adjust as needed
   audio: string;
   createdAt: Date;
-  authorId: string; // User who created the podcast
+  authorId: string | undefined; // User who created the podcast
 }

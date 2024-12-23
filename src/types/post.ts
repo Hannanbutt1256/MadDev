@@ -6,8 +6,8 @@ export interface BlogPostInterface {
   coverImage?: string;
   content: string;
   tags?: string[];
-  createdAt: Date;
-  updatedAt?: Date;
+  createdAt: Date | string;
+  updatedAt?: Date | string;
   likes: [];
   comments: BlogCommentInterface[];
 }
