@@ -54,7 +54,7 @@ const RegisterPage = () => {
         const user = result.user;
         await setDoc(doc(db, "UserProfile", user.uid), {
           id: user.uid,
-          username: "",
+          username: user.displayName,
           email: user.email,
           profilePicture: user.photoURL,
           bio: "",

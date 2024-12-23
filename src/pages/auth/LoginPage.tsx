@@ -12,15 +12,15 @@ import { LoginInterface } from "../../types/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { auth, provider } from "../../utils/firebase";
 import { useNavigate } from "react-router-dom";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "../../utils/firebase";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/store";
+// import { doc, setDoc } from "firebase/firestore";
+// import { db } from "../../utils/firebase";
+// import { useSelector } from "react-redux";
+// import { RootState } from "../../store/store";
 
 const LoginPage = () => {
   const navigate = useNavigate();
 
-  const { Profileuser } = useSelector((state: RootState) => state.userProfile);
+  // const { Profileuser } = useSelector((state: RootState) => state.userProfile);
   //Login with Firebase
   const {
     register,
@@ -35,7 +35,7 @@ const LoginPage = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
-        navigate("/create-post");
+        navigate("/");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -52,19 +52,21 @@ const LoginPage = () => {
         // const token = credential?.accessToken;
         // console.log(token);
         const user = result.user;
-        await setDoc(doc(db, "UserProfile", user.uid), {
-          id: user.uid,
-          username: Profileuser?.username,
-          email: user.email,
-          profilePicture: user.photoURL,
-          bio: Profileuser?.bio,
-          following: Profileuser?.following,
-          followers: Profileuser?.followers,
-          bookmarkedPosts: Profileuser?.bookmarkedPosts,
-        });
+        console.log(user);
+
+        // await setDoc(doc(db, "UserProfile", user.uid), {
+        //   id: user.uid,
+        //   username: Profileuser?.username || user.displayName,
+        //   email: user.email,
+        //   profilePicture: user.photoURL,
+        //   bio: Profileuser?.bio,
+        //   following: Profileuser?.following,
+        //   followers: Profileuser?.followers,
+        //   bookmarkedPosts: Profileuser?.bookmarkedPosts,
+        // });
         console.log(user);
         alert("user is registered");
-        navigate("/create-post");
+        navigate("/");
       })
       .catch((error) => {
         const errorCode = error.code;
