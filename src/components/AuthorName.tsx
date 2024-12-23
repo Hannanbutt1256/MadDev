@@ -5,7 +5,7 @@ import { db } from "../utils/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 interface AuthorNameProps {
-  authorId: string;
+  authorId: string | undefined;
 }
 
 const AuthorName = ({ authorId }: AuthorNameProps) => {
