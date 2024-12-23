@@ -3,6 +3,7 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import FollowedPage from "../pages/FollowedPage";
 import DiscoverPage from "../pages/DiscoverPage";
+import Protected from "./Protected";
 
 const Tabs = () => {
   const navigate = useNavigate();
@@ -34,7 +35,9 @@ const Tabs = () => {
           <DiscoverPage />
         </TabPanel>
         <TabPanel>
-          <FollowedPage />
+          <Protected>
+            <FollowedPage />
+          </Protected>
         </TabPanel>
       </TabPanels>
     </TabGroup>
