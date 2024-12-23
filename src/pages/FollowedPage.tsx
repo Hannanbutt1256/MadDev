@@ -1,14 +1,10 @@
 import ListUser from "../components/ListUser";
-import { UserProfileInterface } from "../types/user";
 import BlogCard from "../components/BlogCard";
 const FollowedPage = () => {
   // const { userfollowing, isUserFollowing } = useState(false);
-  const isUserFollowing = (user: UserProfileInterface): boolean => {
-    return user.following.length === 0;
-  };
   return (
     <>
-      {!isUserFollowing && <ListUser />}
+      <ListUser />
       <div className="min-h-screen flex flex-col items-center md:block   ">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  2xl:grid-cols-4 gap-4">
           <BlogCard
