@@ -38,8 +38,9 @@ export const updateUserProfile = createAsyncThunk(
   async (user: UserProfileInterface, { rejectWithValue }) => {
     try {
       const docRef = doc(db, "UserProfile", user.id);
-      await setDoc(docRef, user);
-      return user;
+      // Ensure isVerified is always set to true during the update
+      await setDoc(docRef, { ...user, isVerified: true });
+      return { ...user, isVerified: true }; // Return the updated user object
     } catch (error) {
       if (error instanceof Error) {
         return rejectWithValue(error.message);
@@ -48,6 +49,7 @@ export const updateUserProfile = createAsyncThunk(
     }
   }
 );
+
 export const fetchAllUsers = createAsyncThunk(
   "user/fetchAllUsers",
   async (currentUserId: string | null, { rejectWithValue }) => {
@@ -58,8 +60,10 @@ export const fetchAllUsers = createAsyncThunk(
 
       for (const doc of querySnapshot.docs) {
         const user = doc.data() as UserProfileInterface;
+        // Ensure followers is an array
+        const followers = Array.isArray(user.followers) ? user.followers : [];
         if (user.id !== currentUserId) {
-          const isFollowing = user.followers.includes(currentUserId || "");
+          const isFollowing = followers.includes(currentUserId || "");
           users.push({ ...user, isFollowing });
         }
       }
@@ -113,6 +117,42 @@ export const unfollowUser = createAsyncThunk(
       await updateDoc(currentUserRef, { following: arrayRemove(targetUserId) });
       await updateDoc(targetUserRef, { followers: arrayRemove(currentUserId) });
       return targetUserId;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("Unknown error");
+    }
+  }
+);
+export const fetchFollowedPosts = createAsyncThunk(
+  "user/fetchFollowedPosts",
+  async (currentUserId: string, { rejectWithValue }) => {
+    try {
+      // Fetch the current user's data to get the following list
+      const currentUserRef = doc(db, "UserProfile", currentUserId);
+      const currentUserSnap = await getDoc(currentUserRef);
+
+      if (!currentUserSnap.exists()) {
+        throw new Error("Current user not found");
+      }
+
+      const { following } = currentUserSnap.data();
+
+      if (!following || following.length === 0) {
+        console.log("No users followed");
+        return [];
+      }
+
+      // Fetch posts from followed users
+      const postsRef = collection(db, "blogPosts");
+      const querySnapshot = await getDocs(postsRef);
+
+      const posts = querySnapshot.docs
+        .map((doc) => doc.data())
+        .filter((post) => following.includes(post.authorId));
+
+      return posts; // Return posts from followed users
     } catch (error) {
       if (error instanceof Error) {
         return rejectWithValue(error.message);
