@@ -1,7 +1,8 @@
-import logo from "../assets/logo.png";
+import logo1 from "../assets/4th Logo Black.svg";
+import logo from "../assets/4th Logo White.svg";
 import { BsMoon, BsSun, BsBell, BsSearch } from "react-icons/bs"; // Importing icons
 import { useTheme } from "../common/ThemeProvider";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
@@ -11,6 +12,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchUserProfile } from "../store/user/userThunks";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { Profileuser } = useSelector((state: RootState) => state.userProfile);
   const { isDarkMode, toggleTheme } = useTheme();
@@ -27,7 +29,7 @@ const Navbar = () => {
     try {
       await signOut(auth); // Logs out the user
       toggleDropdown();
-      console.log("User successfully logged out.");
+      navigate("/auth/login");
     } catch (error) {
       console.error("Error during logout:", error);
     }
@@ -60,10 +62,10 @@ const Navbar = () => {
 
   return (
     // Logo and Search Input
-    <div className="sticky top-0 z-50 flex justify-between items-center px-10 bg-light-background2 dark:bg-dark-card  ">
+    <div className="sticky top-0 z-50 flex justify-between items-center px-10 bg-light-background dark:bg-black h-16 ">
       <div className="flex items-center gap-4 ">
         <Link to="">
-          <img src={logo} alt="Logo" className="w-16 h-16" />
+          <img src={isDarkMode ? logo : logo1} alt="Logo" className="w-8 h-8" />
         </Link>
         <div className="hidden md:block">
           <input
