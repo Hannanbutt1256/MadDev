@@ -61,11 +61,12 @@ const RegisterPage = () => {
           following: [],
           followers: [],
           bookmarkedPosts: [],
+          isVerified: false,
         });
 
         console.log(user);
         alert("user is registered");
-        navigate("/create-post");
+        navigate("/profile");
       })
       .catch((error) => {
         // Handle Errors here.
