@@ -108,8 +108,7 @@ const SavePostPage = () => {
               />
             </Link>
 
-            {/* Action Buttons */}
-            <ActionButtons postId={post.id} />
+            <ActionButtons postId={post.id} targetUserId={post.authorId} />
           </div>
         ))}
       </div>
