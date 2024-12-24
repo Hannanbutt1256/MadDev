@@ -1,22 +1,20 @@
 // src/pages/DiscoverPage.tsx
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllBlogPosts } from "../store/posts/postThunks"; // Adjust import path
+import { fetchAllBlogPosts } from "../store/posts/postThunks";
 import BlogCard from "../components/BlogCard";
 import ActionButtons from "../components/ActionButtons";
-import { RootState, AppDispatch } from "../store/store"; // Adjust path if needed
+import { RootState, AppDispatch } from "../store/store";
 import { Link } from "react-router-dom";
+import AuthorName from "../components/AuthorName";
 
 const DiscoverPage = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   // Access blog posts from Redux store
-  const { posts, error } = useSelector(
-    (state: RootState) => state.allBlogData // Adjusted to the correct slice
-  );
+  const { posts, error } = useSelector((state: RootState) => state.allBlogData);
 
   useEffect(() => {
-    // Dispatch action to fetch blog posts when the component mounts
     dispatch(fetchAllBlogPosts());
   }, [dispatch]);
 
@@ -32,15 +30,13 @@ const DiscoverPage = () => {
             <Link to={`post/${post.id}`}>
               <BlogCard
                 title={post.title}
-                author={post.authorId} // Adjust based on your actual field name
-                createdAt={post.createdAt.toISOString()} // Convert Date to ISO string
-                tags={post.tags} // If you have tags in your blog post, adjust accordingly
-                coverImage={post.coverImage || "https://picsum.photos/200/300"} // Fallback image
+                author={<AuthorName authorId={post.authorId} />}
+                createdAt={post.createdAt.toISOString()}
+                tags={post.tags}
+                coverImage={post.coverImage || "https://picsum.photos/200/300"}
               />
             </Link>
-
-            {/* Action Buttons */}
-            <ActionButtons postId={post.id} />
+            <ActionButtons postId={post.id} targetUserId={post.authorId} />
           </div>
         ))}
       </div>
