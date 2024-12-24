@@ -1,14 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BlogPostInterface } from "../../types/post";
 import { db } from "../../utils/firebase";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  getDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { collection, addDoc, getDocs, updateDoc } from "firebase/firestore";
 
 // Async thunk for adding a blog post to Firebase
 export const addBlogPost = createAsyncThunk(
@@ -47,21 +40,13 @@ export const fetchAllBlogPosts = createAsyncThunk<
     // Loop through each blog post document
     for (const docSnapshot of querySnapshot.docs) {
       const data = docSnapshot.data();
-      const authorId = data.authorId;
 
-      const authorDocRef = doc(db, "UserProfile", authorId);
-      const authorDoc = await getDoc(authorDocRef);
       updateDoc(docSnapshot.ref, { id: docSnapshot.id });
-      let authorName = "Unknown Author"; // Fallback name in case author is not found
-      if (authorDoc.exists()) {
-        const authorData = authorDoc.data();
-        authorName = authorData?.username || "Unknown Author"; // Adjust the field name based on your Firestore schema
-      }
 
       // Push the blog post data along with authorName
       blogPosts.push({
         id: docSnapshot.id,
-        authorId: authorName, // Include the author's name
+        authorId: data.authorId, // Include the author's name
         title: data.title,
         content: data.content,
         coverImage: data.coverImage,
