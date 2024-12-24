@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { FaRegCommentDots } from "react-icons/fa";
 import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { RiUserUnfollowLine, RiUserFollowLine } from "react-icons/ri";
+import { removePostById } from "../store/user/userProfileSlice";
+
 import { db } from "../utils/firebase";
 import {
   doc,
@@ -12,16 +15,22 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import debounce from "lodash.debounce";
-
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
+import { followUser, unfollowUser } from "../store/user/userThunks";
 interface ActionButtonsProps {
   postId: string;
   initialBookmarked?: boolean;
+  targetUserId?: string;
 }
 
 const ActionButtons = ({
   postId,
   initialBookmarked = false,
+  targetUserId,
 }: ActionButtonsProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
   const [likesCount, setLikesCount] = useState(0);
@@ -29,6 +38,9 @@ const ActionButtons = ({
   const auth = getAuth();
   const user = auth.currentUser;
 
+  const profileuser = useSelector(
+    (state: RootState) => state.userProfile.Profileuser
+  );
   useEffect(() => {
     const fetchLikesAndBookmarks = async () => {
       if (!user || !postId) return; // Ensure postId is provided
@@ -135,6 +147,33 @@ const ActionButtons = ({
     debouncedBookmarkHandler(bookmarked);
   };
 
+  const handleFollowToggle = () => {
+    if (!user) {
+      alert("You must be logged in to follow users.");
+      return;
+    }
+    if (user.uid === targetUserId) {
+      return;
+    }
+    if (!profileuser?.following?.includes(targetUserId!)) {
+      dispatch(
+        followUser({
+          currentUserId: user.uid,
+          targetUserId: targetUserId || "",
+        })
+      );
+    } else {
+      dispatch(
+        unfollowUser({
+          currentUserId: user.uid,
+          targetUserId: targetUserId || "",
+        })
+      ).then(() => {
+        dispatch(removePostById(targetUserId!));
+      });
+    }
+  };
+
   return (
     <div className="mt-4 flex items-center justify-between">
       {/* Like Button */}
@@ -166,6 +205,13 @@ const ActionButtons = ({
           <BsBookmarkFill className="w-5 h-5 text-yellow-500" />
         ) : (
           <BsBookmark className="w-5 h-5" />
+        )}
+      </button>
+      <button onClick={handleFollowToggle}>
+        {profileuser?.following?.includes(targetUserId || "") ? (
+          <RiUserUnfollowLine className="w-5 h-5" />
+        ) : (
+          <RiUserFollowLine className="w-5 h-5" />
         )}
       </button>
     </div>
