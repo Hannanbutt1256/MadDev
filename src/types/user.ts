@@ -8,4 +8,5 @@ export interface UserProfileInterface {
   followers: string[];
   following: string[];
   bookmarkedPosts: string[];
+  isverified: boolean;
 }
