@@ -130,7 +130,7 @@ const BlogPostViewer = ({ postId }: BlogPostViewerProps) => {
         ))}
       </div>
       <div className="p-2 bg-light-background2 dark:bg-dark-card ">
-        <ActionButtons postId={post.id} />
+        <ActionButtons postId={post.id} targetUserId={post.authorId} />
       </div>
       <LexicalComposer
         initialConfig={{
