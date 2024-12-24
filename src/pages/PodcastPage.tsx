@@ -62,15 +62,15 @@ const PodcastPage: React.FC = () => {
                       </p>
                       <div className="text-sm text-gray-500">
                         <p className="mb-1">
-                          <span className="font-medium">Duration:</span>{" "}
+                          <span className="font-medium">Duration:</span>
                           {Math.floor(podcast.duration / 60)} minutes
                         </p>
                         <p className="mb-1">
-                          <span className="font-medium">Tags:</span>{" "}
+                          <span className="font-medium">Tags:</span>
                           {podcast.tags?.join(", ") || "No tags"}
                         </p>
                         <p className="mb-1">
-                          <span className="font-medium">Created:</span>{" "}
+                          <span className="font-medium">Created:</span>
                           {format(
                             podcast.createdAt instanceof Date
                               ? podcast.createdAt
@@ -79,7 +79,7 @@ const PodcastPage: React.FC = () => {
                           )}
                         </p>
                         <p className="mb-1">
-                          <span className="font-medium">Author:</span>{" "}
+                          <span className="font-medium">Author:</span>
                           <span className="inline-block">
                             <AuthorName authorId={podcast.authorId} />
                           </span>
