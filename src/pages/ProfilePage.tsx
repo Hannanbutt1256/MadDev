@@ -4,9 +4,19 @@ import { fetchUserProfile, updateUserProfile } from "../store/user/userThunks";
 import { RootState, AppDispatch } from "../store/store";
 import { auth } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
 const CLOUDINARY_UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+// Validation schema using Yup
+const validationSchema = Yup.object().shape({
+  username: Yup.string().required("Username is required"),
+  bio: Yup.string().max(500, "Bio must be at most 500 characters").required(),
+});
+
 const ProfilePage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { Profileuser, isLoading, error } = useSelector(
@@ -14,13 +24,23 @@ const ProfilePage = () => {
   );
   const [authUser, authLoading, authError] = useAuthState(auth);
 
-  // Local state for input fields
-  const [username, setUsername] = useState("");
-  const [bio, setBio] = useState("");
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profileImageUrl, setProfileImageUrl] = useState(
     Profileuser?.profilePicture
   );
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      username: "",
+      bio: "",
+    },
+  });
 
   // Fetch user profile when the authUser is available
   useEffect(() => {
@@ -32,13 +52,13 @@ const ProfilePage = () => {
   // Prefill input fields when user data is available
   useEffect(() => {
     if (Profileuser) {
-      setUsername(Profileuser.username || "");
-      setBio(Profileuser.bio || "");
+      setValue("username", Profileuser.username || "");
+      setValue("bio", Profileuser.bio || "");
       setProfileImageUrl(
         Profileuser.profilePicture || "/assets/default-profile.png"
       );
     }
-  }, [Profileuser]);
+  }, [Profileuser, setValue]);
 
   // Handle image change
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,8 +94,7 @@ const ProfilePage = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: { username: string; bio: string }) => {
     let imageUrl = profileImageUrl;
 
     // Upload image to Cloudinary if a new image is selected
@@ -92,8 +111,7 @@ const ProfilePage = () => {
     if (Profileuser) {
       const updatedUser = {
         ...Profileuser,
-        username,
-        bio,
+        ...data,
         profilePicture: imageUrl,
       };
       dispatch(updateUserProfile(updatedUser));
@@ -115,10 +133,10 @@ const ProfilePage = () => {
   return (
     <div>
       {Profileuser ? (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium">Profile Image</label>
-            <div className="md:flex  items-center space-x-4">
+            <div className="md:flex items-center space-x-4">
               <img
                 src={profileImageUrl}
                 alt="Profile"
@@ -128,7 +146,7 @@ const ProfilePage = () => {
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
-                className="block w-full text-sm border border-light-button text-light-button   dark:border-dark-button dark:text-dark-button   file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-light-button file:text-light-background hover:file:bg-light-hover hover:file:text-light-background dark:file:bg-dark-button dark:file:text-dark-text dark:hover:file:bg-dark-hover2 dark:hover:file:text-dark-text rounded-lg focus:outline-none"
+                className="block w-full text-sm border border-light-button text-light-button dark:border-dark-button dark:text-dark-button file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-light-button file:text-light-background hover:file:bg-light-hover hover:file:text-light-background dark:file:bg-dark-button dark:file:text-dark-text dark:hover:file:bg-dark-hover2 dark:hover:file:text-dark-text rounded-lg focus:outline-none"
               />
             </div>
           </div>
@@ -137,10 +155,12 @@ const ProfilePage = () => {
             <label className="block text-sm font-medium">Username</label>
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              {...register("username")}
               className="mt-1 p-2 border rounded w-full dark:bg-dark-background"
             />
+            {errors.username && (
+              <p className="text-red-500 text-sm">{errors.username.message}</p>
+            )}
           </div>
 
           <div>
@@ -156,16 +176,18 @@ const ProfilePage = () => {
           <div>
             <label className="block text-sm font-medium">Bio</label>
             <textarea
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
+              {...register("bio")}
               className="mt-1 p-2 border rounded w-full dark:bg-dark-background"
               rows={4}
             />
+            {errors.bio && (
+              <p className="text-red-500 text-sm">{errors.bio.message}</p>
+            )}
           </div>
 
           <button
             type="submit"
-            className=" border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text px-4 py-2 rounded "
+            className="border border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text px-4 py-2 rounded"
           >
             Update Profile
           </button>
