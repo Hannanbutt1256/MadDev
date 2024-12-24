@@ -2,40 +2,86 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../store/store";
 import {
   fetchAllUsers,
+  fetchFollowedPosts,
   followUser,
   unfollowUser,
 } from "../store/user/userThunks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { auth } from "../utils/firebase";
+// import { db } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
+// import { doc, onSnapshot } from "firebase/firestore";
 
 const ListUser = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { allUsers, isLoading, error } = useSelector(
     (state: RootState) => state.userProfile
   );
+  const { Profileuser } = useSelector((state: RootState) => state.userProfile);
   const [authUser, authLoading, authError] = useAuthState(auth);
+  const [followingIds, setFollowingIds] = useState<string[]>([]);
 
+  // Fetch all users initially
   useEffect(() => {
-    if (authUser) {
+    if (authUser && allUsers.length === 0) {
       dispatch(fetchAllUsers(authUser.uid));
     }
-  }, [authUser, dispatch]);
+  }, [authUser, allUsers.length, dispatch]);
 
-  const handleFollowToggle = (
+  // Listen to real-time updates for the current user's following list
+  // useEffect(() => {
+  //   if (!authUser) return;
+
+  //   const userRef = doc(db, "UserProfile", authUser.uid);
+  //   const unsubscribe = onSnapshot(userRef, (docSnapshot) => {
+  //     if (docSnapshot.exists()) {
+  //       const userData = docSnapshot.data();
+  //       setFollowingIds(userData.following || []);
+  //     }
+  //   });
+
+  //   return () => unsubscribe();
+  // }, [authUser]);
+
+  // Update local state when Profileuser changes
+  useEffect(() => {
+    if (Profileuser?.following) {
+      setFollowingIds(Profileuser.following);
+    }
+  }, [Profileuser?.following]);
+
+  const handleFollowToggle = async (
     userId: string,
     isCurrentlyFollowing: boolean
   ) => {
     if (!authUser) return;
 
-    if (isCurrentlyFollowing) {
-      dispatch(
-        unfollowUser({ currentUserId: authUser.uid, targetUserId: userId })
+    // Optimistically update UI
+    setFollowingIds((prev) =>
+      isCurrentlyFollowing
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId]
+    );
+
+    try {
+      if (isCurrentlyFollowing) {
+        await dispatch(
+          unfollowUser({ currentUserId: authUser.uid, targetUserId: userId })
+        ).unwrap();
+      } else {
+        await dispatch(
+          followUser({ currentUserId: authUser.uid, targetUserId: userId })
+        ).unwrap();
+        await dispatch(fetchFollowedPosts(authUser.uid));
+      }
+    } catch (error) {
+      // Revert optimistic update on error
+      setFollowingIds((prev) =>
+        isCurrentlyFollowing
+          ? [...prev, userId]
+          : prev.filter((id) => id !== userId)
       );
-    } else {
-      dispatch(
-        followUser({ currentUserId: authUser.uid, targetUserId: userId })
-      );
+      console.error("Error toggling follow state:", error);
     }
   };
 
@@ -68,15 +114,17 @@ const ListUser = () => {
               </p>
             </div>
             <button
-              onClick={() => handleFollowToggle(user.id, !!user.isFollowing)}
+              onClick={() =>
+                handleFollowToggle(user.id, followingIds.includes(user.id))
+              }
               className={`m-2 ml-3 border px-4 py-2 rounded transition-colors duration-200
                 ${
-                  user.isFollowing
+                  followingIds.includes(user.id)
                     ? "border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
                     : "border-light-button hover:bg-light-button hover:text-light-background dark:border-dark-button dark:text-dark-button dark:hover:bg-dark-hover2 dark:hover:text-dark-text"
                 }`}
             >
-              {user.isFollowing ? "Unfollow" : "Follow"}
+              {followingIds.includes(user.id) ? "Unfollow" : "Follow"}
             </button>
           </div>
         ))}
