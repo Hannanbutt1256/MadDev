@@ -1,5 +1,5 @@
-// src/pages/DiscoverPage.tsx
-import { useEffect } from "react";
+// DiscoverPage.tsx
+import { useEffect, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllBlogPosts } from "../store/posts/postThunks";
 import BlogCard from "../components/BlogCard";
@@ -10,17 +10,57 @@ import AuthorName from "../components/AuthorName";
 
 const DiscoverPage = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const loader = useRef<HTMLDivElement>(null);
 
-  // Access blog posts from Redux store
-  const { posts, error } = useSelector((state: RootState) => state.allBlogData);
+  const { posts, error, hasMore, lastVisible, status, isLoadingMore } =
+    useSelector((state: RootState) => state.allBlogData);
 
   useEffect(() => {
-    dispatch(fetchAllBlogPosts());
-  }, [dispatch]);
+    if (status === "idle") {
+      dispatch(fetchAllBlogPosts());
+    }
+  }, [dispatch, status]);
+
+  const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const target = entries[0];
+      if (target.isIntersecting && hasMore && !isLoadingMore) {
+        dispatch(fetchAllBlogPosts({ lastVisible }));
+      }
+    },
+    [dispatch, hasMore, isLoadingMore, lastVisible]
+  );
+
+  useEffect(() => {
+    const currentLoader = loader.current;
+    const option = {
+      root: null,
+      rootMargin: "20px",
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver(handleObserver, option);
+    if (currentLoader) observer.observe(currentLoader);
+
+    return () => {
+      if (currentLoader) observer.unobserve(currentLoader);
+    };
+  }, [handleObserver]);
 
   if (error) {
     return <div>Error: {error}</div>;
   }
+
+  if (status === "loading" && posts.length === 0) {
+    return <div>Loading...</div>;
+  }
+
+  const formatDate = (date: Date | string) => {
+    if (typeof date === "string") {
+      return date;
+    }
+    return date.toISOString();
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center md:block">
@@ -31,7 +71,7 @@ const DiscoverPage = () => {
               <BlogCard
                 title={post.title}
                 author={<AuthorName authorId={post.authorId} />}
-                createdAt={post.createdAt.toISOString()}
+                createdAt={formatDate(post.createdAt)}
                 tags={post.tags}
                 coverImage={post.coverImage || "https://picsum.photos/200/300"}
               />
@@ -39,6 +79,11 @@ const DiscoverPage = () => {
             <ActionButtons postId={post.id} targetUserId={post.authorId} />
           </div>
         ))}
+      </div>
+
+      <div ref={loader} className="w-full py-4 text-center">
+        {isLoadingMore && <div>Loading more posts...</div>}
+        {!hasMore && posts.length > 0 && <div>No more posts to load</div>}
       </div>
     </div>
   );
