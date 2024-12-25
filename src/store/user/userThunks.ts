@@ -39,7 +39,7 @@ export const updateUserProfile = createAsyncThunk(
     try {
       const docRef = doc(db, "UserProfile", user.id);
       // Ensure isVerified is always set to true during the update
-      await setDoc(docRef, { ...user, isVerified: true });
+      await setDoc(docRef, { ...user, isSubscribed: false, isVerified: true });
       return { ...user, isVerified: true }; // Return the updated user object
     } catch (error) {
       if (error instanceof Error) {

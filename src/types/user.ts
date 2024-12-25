@@ -9,4 +9,5 @@ export interface UserProfileInterface {
   following: string[];
   bookmarkedPosts: string[];
   isverified: boolean;
+  isSubscribed: boolean;
 }

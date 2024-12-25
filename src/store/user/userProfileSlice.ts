@@ -16,6 +16,7 @@ interface UserState {
   followedPosts: any[];
   isLoading: boolean;
   error: string | null;
+  isSubscribed: boolean; // Add subscription status
 }
 
 const initialState: UserState = {
@@ -24,6 +25,7 @@ const initialState: UserState = {
   followedPosts: [],
   isLoading: false,
   error: null,
+  isSubscribed: false, // Initialize subscription status
 };
 
 export const userProfileSlice = createSlice({
@@ -34,11 +36,15 @@ export const userProfileSlice = createSlice({
       state.Profileuser = null;
       state.isLoading = false;
       state.error = null;
+      state.isSubscribed = false; // Reset subscription status
     },
     removePostById: (state, action: PayloadAction<string>) => {
       state.followedPosts = state.followedPosts.filter(
         (post) => post.authorId !== action.payload
       );
+    },
+    setSubscriptionStatus: (state, action: PayloadAction<boolean>) => {
+      state.isSubscribed = action.payload;
     },
   },
   extraReducers(builder) {
@@ -161,5 +167,6 @@ export const userProfileSlice = createSlice({
       });
   },
 });
-export const { clearUser, removePostById } = userProfileSlice.actions;
+export const { clearUser, removePostById, setSubscriptionStatus } =
+  userProfileSlice.actions;
 export default userProfileSlice.reducer;

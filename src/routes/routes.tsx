@@ -22,6 +22,10 @@ import DiscoverPage from "../pages/DiscoverPage";
 import Protected from "../components/Protected";
 import NotFound from "../common/NotFound";
 import ErrorBoundary from "../common/ErrorBoundary";
+import PaymentPage from "../pages/PaymentPage";
+import SuccessPage from "../pages/SuccessPage";
+import PaymentProtection from "../components/PaymentProtection";
+
 const routes = createRoutesFromElements(
   <Route
     path="/"
@@ -79,7 +83,9 @@ const routes = createRoutesFromElements(
       path="podcasts"
       element={
         <Protected>
-          <PodcastPage />
+          <PaymentProtection>
+            <PodcastPage />
+          </PaymentProtection>
         </Protected>
       }
     />
@@ -88,6 +94,8 @@ const routes = createRoutesFromElements(
     <Route path="notifications" element={<NotificationPage />} />
     <Route path="subscription" element={<SubscriptionPage />} />
     <Route path="create-podcast" element={<CreatePodcastsPage />} />
+    <Route path="payment" element={<PaymentPage />} />
+    <Route path="success" element={<SuccessPage />} />
   </Route>
 );
 export default routes;
