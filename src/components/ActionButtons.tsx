@@ -12,6 +12,8 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
+  collection,
+  setDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import debounce from "lodash.debounce";
@@ -76,17 +78,34 @@ const ActionButtons = ({
   // Debounced Like Button Handler
   const debouncedLikeHandler = useCallback(
     debounce(async (likedState: boolean) => {
-      if (!user) return;
+      if (!user || !targetUserId) return; // Ensure the target user ID exists
 
       const postRef = doc(db, "blogPosts", postId);
-
+      const userRef = doc(db, "UserProfile", user.uid);
+      const userDoc = await getDoc(userRef);
+      const username = userDoc.data()?.username;
       setLoading(true);
       try {
         if (!likedState) {
           await updateDoc(postRef, {
             likes: arrayUnion(user.uid),
           });
-          await setLikesCount((prev) => prev + 1);
+          setLikesCount((prev) => prev + 1);
+
+          // Add Notification for the post owner
+          if (user.uid !== targetUserId) {
+            // Avoid sending notifications to yourself
+            const notificationRef = doc(collection(db, "notifications"));
+            await setDoc(notificationRef, {
+              userId: targetUserId, // Notify the post owner
+              message: `${
+                user.displayName || username || "Someone"
+              } liked your post.`,
+              timestamp: new Date(), // Ensure this is a Firestore Timestamp
+              postId,
+              likedBy: user.uid, // Optional: Add who liked the post
+            });
+          }
         } else {
           await updateDoc(postRef, {
             likes: arrayRemove(user.uid),
@@ -100,7 +119,7 @@ const ActionButtons = ({
         setLoading(false);
       }
     }, 500),
-    [postId, user]
+    [postId, user, targetUserId]
   );
 
   const handleLike = () => {
