@@ -19,6 +19,7 @@
     "@lexical/selection": "^0.21.0",
     "@material-tailwind/react": "^2.1.10",
     "@reduxjs/toolkit": "^2.4.0",
+    "axios": "^1.7.9",
     "date-fns": "^4.1.0",
     "firebase": "^11.0.2",
     "lexical": "^0.21.0",
