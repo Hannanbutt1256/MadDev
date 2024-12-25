@@ -1,7 +1,18 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BlogPostInterface } from "../../types/post";
 import { db } from "../../utils/firebase";
-import { collection, addDoc, getDocs, updateDoc } from "firebase/firestore";
+// import { collection, addDoc, getDocs, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  limit,
+  startAfter,
+  DocumentSnapshot,
+  QueryDocumentSnapshot,
+} from "firebase/firestore";
 
 // Async thunk for adding a blog post to Firebase
 export const addBlogPost = createAsyncThunk(
@@ -27,38 +38,50 @@ export const addBlogPost = createAsyncThunk(
 );
 
 // Async thunk for fetching all blog posts along with author name
+interface FetchParams {
+  lastVisible?: DocumentSnapshot | null;
+}
+
 export const fetchAllBlogPosts = createAsyncThunk<
-  BlogPostInterface[],
-  void,
+  { posts: BlogPostInterface[]; lastVisible: DocumentSnapshot | null },
+  FetchParams | void,
   { rejectValue: string }
->("blogPosts/fetchAll", async (_, { rejectWithValue }) => {
+>("blogPosts/fetchAll", async (params, { rejectWithValue }) => {
   try {
-    // Fetch all posts from the Firestore 'blogPosts' collection
-    const querySnapshot = await getDocs(collection(db, "blogPosts"));
+    const postsRef = collection(db, "blogPosts");
+    let q = query(postsRef, orderBy("createdAt", "desc"), limit(10));
+
+    if (params?.lastVisible) {
+      q = query(
+        postsRef,
+        orderBy("createdAt", "desc"),
+        startAfter(params.lastVisible),
+        limit(10)
+      );
+    }
+
+    const querySnapshot = await getDocs(q);
     const blogPosts: BlogPostInterface[] = [];
+    const lastVisible =
+      querySnapshot.docs[querySnapshot.docs.length - 1] || null;
 
-    // Loop through each blog post document
-    for (const docSnapshot of querySnapshot.docs) {
+    querySnapshot.docs.forEach((docSnapshot: QueryDocumentSnapshot) => {
       const data = docSnapshot.data();
-
-      updateDoc(docSnapshot.ref, { id: docSnapshot.id });
-
-      // Push the blog post data along with authorName
       blogPosts.push({
         id: docSnapshot.id,
-        authorId: data.authorId, // Include the author's name
+        authorId: data.authorId,
         title: data.title,
         content: data.content,
         coverImage: data.coverImage,
         tags: data.tags,
-        createdAt: data.createdAt.toDate(), // Assuming createdAt is a Firestore timestamp
-        updatedAt: data.updatedAt.toDate(), // Assuming updatedAt is a Firestore timestamp
-        likes: data.likes,
-        comments: data.comments,
+        createdAt: data.createdAt.toDate(),
+        updatedAt: data.updatedAt.toDate(),
+        likes: data.likes || [],
+        comments: data.comments || [],
       });
-    }
+    });
 
-    return blogPosts;
+    return { posts: blogPosts, lastVisible };
   } catch (error) {
     console.error("Error fetching blog posts from Firebase:", error);
     return rejectWithValue((error as Error).message);
