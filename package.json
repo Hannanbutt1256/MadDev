@@ -12,6 +12,7 @@
   "dependencies": {
     "@cloudinary/react": "^1.13.1",
     "@cloudinary/url-gen": "^1.21.0",
+    "@formspree/react": "^2.5.1",
     "@headlessui/react": "^2.2.0",
     "@hookform/resolvers": "^3.9.1",
     "@lexical/react": "^0.21.0",
