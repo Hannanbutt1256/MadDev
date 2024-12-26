@@ -73,7 +73,7 @@ const CheckoutForm: React.FC = () => {
   };
 
   return (
-    <div className=" mt-5 px-16 py-10 bg-gray-100 shadow-md rounded-lg">
+    <div className=" mt-5 px-16 py-10 bg-light-background dark:bg-black ">
       <h2 className="text-2xl font-bold text-center mb-4">Checkout</h2>
       <p className="text-lg font-semibold text-gray-700 text-center">
         Total Amount:

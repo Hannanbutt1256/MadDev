@@ -5,7 +5,7 @@ import { podcastSchema, PodcastSchemaType } from "../validation/podcastSchema";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
 import { addPodcast } from "../store/podcast/podcastThunks";
-import { PodcastInterface } from "../types/podcast";
+// import { PodcastInterface } from "../types/podcast";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../utils/firebase";
 // Assuming you have this array defined somewhere
@@ -337,7 +337,7 @@ const predefinedTags = [
   "Version Control",
 ];
 
-const AddPodcastForm: React.FC<PodcastInterface> = () => {
+const AddPodcastForm: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [authUser] = useAuthState(auth);
   const authorId = authUser?.uid;
