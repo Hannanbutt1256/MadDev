@@ -140,7 +140,7 @@ export const fetchFollowedPosts = createAsyncThunk(
       const { following } = currentUserSnap.data();
 
       if (!following || following.length === 0) {
-        console.log("No users followed");
+        // console.log("No users followed");
         return [];
       }
 

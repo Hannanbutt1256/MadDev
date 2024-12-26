@@ -63,7 +63,6 @@ const Toolbar = () => {
   };
   const handleSave = (content: string) => {
     localStorage.setItem("editorContent", content);
-    console.log(content);
   };
 
   useEffect(() => {

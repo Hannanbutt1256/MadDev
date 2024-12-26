@@ -27,7 +27,6 @@ const useNotificationListener = (userId: string) => {
       where("userId", "==", userId),
       orderBy("timestamp", "desc")
     );
-    console.log("Query:", q);
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const newNotifications = snapshot.docs.map((doc) => {
@@ -39,7 +38,6 @@ const useNotificationListener = (userId: string) => {
           timestamp: data.timestamp.toDate(), // assuming timestamp is a Firestore Timestamp
         };
       });
-      console.log("New Notifications:", newNotifications);
       setNotifications(newNotifications);
     });
 

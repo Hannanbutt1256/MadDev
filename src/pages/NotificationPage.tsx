@@ -13,14 +13,11 @@ const Notifications = () => {
 
   useEffect(() => {
     if (user) {
-      console.log("Dispatching fetchNotifications for user:", user.uid);
       dispatch(fetchNotifications(user.uid));
     }
   }, [dispatch, user]);
 
-  useEffect(() => {
-    console.log("Notifications:", notifications);
-  }, [notifications]);
+  useEffect(() => {}, [notifications]);
 
   if (loading) return <p>Loading notifications...</p>;
 

@@ -527,7 +527,6 @@ const AddPodcastForm: React.FC = () => {
       createdAt: new Date(),
     };
 
-    console.log(formDataWithFiles);
     dispatch(addPodcast(formDataWithFiles));
     // Handle your form submission here
   };

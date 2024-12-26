@@ -63,7 +63,7 @@ const ContentRenderer = ({
 
   useEffect(() => {
     const parsedContent = JSON.parse(serializedContent);
-    console.log("Parsed Content:", parsedContent);
+    // console.log("Parsed Content:", parsedContent);
 
     // Schedule editor updates safely
     Promise.resolve().then(() => {

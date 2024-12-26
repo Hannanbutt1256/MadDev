@@ -77,10 +77,10 @@ const LoginPage = () => {
         // // Log details for debugging
         // console.error("Google Sign-In Error:", errorCode, errorMessage);
         // console.log("Email:", error.customData?.email); // Safe access to email
-        console.log(
-          "Credential:",
-          GoogleAuthProvider.credentialFromError(error)
-        );
+        // console.log(
+        //   "Credential:",
+        //   GoogleAuthProvider.credentialFromError(error)
+        // );
 
         // Use a switch statement for cleaner error handling
         switch (errorCode) {

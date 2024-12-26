@@ -27,7 +27,6 @@ const LinkPlugin = () => {
 
   const insertLink = useCallback(() => {
     if (linkUrl && isValidUrl(linkUrl)) {
-      console.log("Inserting link:", linkUrl);
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, {
         url: linkUrl.trim(),
         target: "_blank",

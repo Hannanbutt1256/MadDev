@@ -56,8 +56,6 @@ export default function ImagePlugin() {
       src = url;
     }
 
-    console.log("Adding image with src:", src); // Debug log
-
     editor.update(() => {
       const node = $createImageNode({
         src,

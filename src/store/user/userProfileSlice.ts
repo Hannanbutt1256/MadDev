@@ -100,7 +100,7 @@ export const userProfileSlice = createSlice({
         (state, action: PayloadAction<UserProfileInterface[]>) => {
           state.isLoading = false;
           state.allUsers = action.payload;
-          console.log("Fetched users:", action.payload);
+          // console.log("Fetched users:", action.payload);
         }
       )
       .addCase(fetchAllUsers.rejected, (state, action) => {
@@ -113,7 +113,7 @@ export const userProfileSlice = createSlice({
         state.error = null;
       })
       .addCase(followUser.fulfilled, (state, action: PayloadAction<string>) => {
-        console.log("Fetched users:", action.payload);
+        // console.log("Fetched users:", action.payload);
 
         state.isLoading = false;
         // Update the following list in allUsers state to reflect the follow action

@@ -25,7 +25,7 @@ export const fetchNotifications = createAsyncThunk(
   "notifications/fetchNotifications",
   async (userId: string) => {
     try {
-      console.log("Fetching notifications for user:", userId);
+      // console.log("Fetching notifications for user:", userId);
       const notificationsRef = collection(db, "notifications");
       const q = query(
         notificationsRef,
@@ -35,9 +35,9 @@ export const fetchNotifications = createAsyncThunk(
 
       const querySnapshot = await getDocs(q);
       if (querySnapshot.empty) {
-        console.log("No notifications found for user:", userId);
+        // console.log("No notifications found for user:", userId);
       } else {
-        console.log("Number of notifications fetched:", querySnapshot.size);
+        // console.log("Number of notifications fetched:", querySnapshot.size);
       }
 
       return querySnapshot.docs.map((doc) => {

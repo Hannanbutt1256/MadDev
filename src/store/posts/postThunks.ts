@@ -12,6 +12,7 @@ import {
   startAfter,
   DocumentSnapshot,
   QueryDocumentSnapshot,
+  updateDoc,
 } from "firebase/firestore";
 
 // Async thunk for adding a blog post to Firebase
@@ -29,7 +30,9 @@ export const addBlogPost = createAsyncThunk(
       });
 
       // Include the Firestore-generated ID in the returned post object
-      return { ...newPost, id: docRef.id }; // Return post with the generated Firestore ID
+      const postWithId = { ...newPost, id: docRef.id };
+      // console.log("Added post with ID:", postWithId); // Log the post with ID for debugging
+      return postWithId; // Return post with the generated Firestore ID
     } catch (error) {
       console.error("Error adding blog post to Firebase:", error);
       return rejectWithValue((error as Error).message);
@@ -67,7 +70,7 @@ export const fetchAllBlogPosts = createAsyncThunk<
 
     querySnapshot.docs.forEach((docSnapshot: QueryDocumentSnapshot) => {
       const data = docSnapshot.data();
-      blogPosts.push({
+      const postWithId = {
         id: docSnapshot.id,
         authorId: data.authorId,
         title: data.title,
@@ -76,9 +79,11 @@ export const fetchAllBlogPosts = createAsyncThunk<
         tags: data.tags,
         createdAt: data.createdAt.toDate(),
         updatedAt: data.updatedAt.toDate(),
-        likes: data.likes || [],
+        likes: data.likes || 0,
         comments: data.comments || [],
-      });
+      };
+      updateDoc(docSnapshot.ref, { id: docSnapshot.id });
+      blogPosts.push(postWithId);
     });
 
     return { posts: blogPosts, lastVisible };
