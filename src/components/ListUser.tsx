@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { auth } from "../utils/firebase";
 // import { db } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
+
 // import { doc, onSnapshot } from "firebase/firestore";
 
 const ListUser = () => {
@@ -103,7 +104,7 @@ const ListUser = () => {
             className="flex items-center p-4 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm"
           >
             <img
-              src={user.profilePicture || "/default-avatar.png"}
+              src={user.profilePicture}
               alt={`${user.username}'s profile`}
               className="w-12 h-12 rounded-full object-cover mr-4"
             />

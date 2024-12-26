@@ -23,9 +23,10 @@ export const useGetPostDataFromLocalStorage = (): BlogPostInterface | null => {
       coverImage: editPageData.coverImage || "",
       createdAt: new Date(),
       updatedAt: new Date(),
-      likes: 0,
+      likes: [],
       comments: [],
     };
+    localStorage.setItem("blogPosts", JSON.stringify(newPost));
 
     return newPost;
   } catch (error) {
