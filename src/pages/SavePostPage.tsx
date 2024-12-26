@@ -101,7 +101,9 @@ const SavePostPage = () => {
                 title={post.title}
                 author={<AuthorName authorId={post.authorId} />} // Adjust based on your actual field name
                 createdAt={
-                  post.createdAt ? post.createdAt.toISOString() : "Unknown Date"
+                  post.createdAt instanceof Date
+                    ? post.createdAt.toISOString()
+                    : "Unknown Date"
                 }
                 tags={post.tags || []} // If you have tags in your blog post, adjust accordingly
                 coverImage={post.coverImage || "https://picsum.photos/200/300"} // Fallback image

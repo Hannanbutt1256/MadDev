@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const HelpPage = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
