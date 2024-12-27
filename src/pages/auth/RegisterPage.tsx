@@ -10,6 +10,7 @@ import {
 import { setDoc, doc } from "firebase/firestore";
 import { auth, provider, db } from "../../utils/firebase";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-toastify";
 const RegisterPage = () => {
   const navigate = useNavigate();
   const {
@@ -36,8 +37,7 @@ const RegisterPage = () => {
           followers: [],
           bookmarkedPosts: [],
         });
-        console.log("User created successfully:", user);
-        alert("User created successfully");
+        toast.success("User created successfully");
         navigate("/create-post");
       })
       .catch((error) => {
@@ -63,17 +63,15 @@ const RegisterPage = () => {
           bookmarkedPosts: [],
           isVerified: false,
         });
-
-        console.log(user);
-        alert("user is registered");
+        toast.success("User created successfully");
         navigate("/profile");
       })
       .catch((error) => {
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        alert(errorCode);
-        alert(errorMessage);
+        toast.error(errorCode);
+        toast.error(errorMessage);
 
         const email = error.customData.email;
         console.log(email);

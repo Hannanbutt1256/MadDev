@@ -14,6 +14,7 @@ import {
   QueryDocumentSnapshot,
   updateDoc,
 } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 // Async thunk for adding a blog post to Firebase
 export const addBlogPost = createAsyncThunk(
@@ -28,6 +29,7 @@ export const addBlogPost = createAsyncThunk(
         likes: 0, // Initialize likes to 0
         comments: [], // Initialize comments as an empty array
       });
+      toast.success("Post added successfully"); // Show a success toast
 
       // Include the Firestore-generated ID in the returned post object
       const postWithId = { ...newPost, id: docRef.id };

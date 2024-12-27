@@ -9,6 +9,7 @@ import {
 import { getAuth } from "firebase/auth";
 import { PodcastInterface } from "../../types/podcast";
 import { db } from "../../utils/firebase";
+import { toast } from "react-toastify";
 
 // Fetch podcasts from Firebase Firestore
 export const fetchPodcasts = createAsyncThunk<
@@ -61,7 +62,7 @@ export const addPodcast = createAsyncThunk<
       authorId: user.uid, // Include authorId from the authenticated user
       createdAt: serverTimestamp(),
     });
-
+    toast.success("Podcast added successfully");
     return { ...newPodcast, id: docRef.id }; // Return the new podcast with the generated ID
   } catch (error) {
     if (error instanceof Error) {

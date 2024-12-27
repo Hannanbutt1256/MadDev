@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -34,7 +34,9 @@ const LoginPage = () => {
     await signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
+        toast.success(<>Login successful</>);
         console.log(user);
+
         navigate("/");
       })
       .catch((error) => {
@@ -52,7 +54,7 @@ const LoginPage = () => {
         // const token = credential?.accessToken;
         // console.log(token);
         const user = result.user;
-        console.log(user);
+        // console.log(user);
 
         // await setDoc(doc(db, "UserProfile", user.uid), {
         //   id: user.uid,
@@ -64,8 +66,14 @@ const LoginPage = () => {
         //   followers: Profileuser?.followers,
         //   bookmarkedPosts: Profileuser?.bookmarkedPosts,
         // });
-        console.log(user);
-        alert("user is registered");
+        // console.log(user);
+        toast.success(
+          <>
+            Login successful,
+            <br />
+            Welcome {user.displayName}
+          </>
+        );
         navigate("/");
       })
       .catch((error) => {
@@ -111,18 +119,6 @@ const LoginPage = () => {
   return (
     <div className="px-10 h-screen w-screen">
       <div className="flex flex-col justify-center items-center h-full ">
-        <ToastContainer
-          position="top-center"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
         <div className="rounded-md w-[350px] md:w-[500px] p-10 bg-light-background2 dark:text-dark-text text-light-text  dark:bg-dark-card">
           <h1 className="text-3xl text-center  mb-2 ">Login</h1>
           <div className="flex flex-col p-2 mb-2">
