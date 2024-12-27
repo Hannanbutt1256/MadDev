@@ -104,7 +104,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
         src={this.__src}
         alt={this.__altText}
         style={{
-          width: this.__width,
+          width: 310,
           height: this.__height,
           maxWidth: this.__maxWidth,
         }}
@@ -121,8 +121,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     const image = document.createElement("img");
     image.setAttribute("src", this.__src);
     image.setAttribute("alt", this.__altText);
-    if (this.__width !== "inherit")
-      image.setAttribute("width", `${this.__width}`);
+    image.setAttribute("width", "300px");
     if (this.__height !== "inherit")
       image.setAttribute("height", `${this.__height}`);
     return { element: image };
@@ -143,9 +142,8 @@ export const $createImageNode = ({
   height,
   maxWidth = 400,
   src,
-  width,
 }: ImageNodePayload) => {
-  return new ImageNode({ altText, height, maxWidth, src, width });
+  return new ImageNode({ altText, height, maxWidth, src, width: 350 });
 };
 
 // Conversion function for DOM import
@@ -155,6 +153,7 @@ const convertImageElement = (domNode: Node): DOMConversionOutput | null => {
     const node = $createImageNode({
       src,
       altText: alt,
+      width: 300,
       maxWidth: 400,
     });
     return { node };

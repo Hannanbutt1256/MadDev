@@ -31,7 +31,7 @@ const convertYoutubeElement = (
 };
 
 const HEIGHT = "315px";
-const WIDTH = "560px";
+const WIDTH = "300px";
 const getYoutubeLink = (id: string) =>
   `https://www.youtube-nocookie.com/embed/${id}`;
 
