@@ -2,7 +2,7 @@
 
 ## Overview
 
-MadDev is a podcast application that allows users to create, manage, and listen to podcasts. This README provides an overview of the project structure, setup instructions, and usage guidelines.
+MadDev is a podcast application that allows users to create, manage, and read blog posts. It also has a feature to listen to podcasts, but it's a paid feature. This README provides an overview of the project structure, setup instructions, and usage guidelines.
 
 ## Project Structure
 
@@ -121,6 +121,14 @@ Firebase is initialized in `src/utils/firebase.ts`. The following instances are 
 - `auth`: Firebase authentication instance.
 - `provider`: Google authentication provider.
 - `db`: Firestore database instance.
+
+### Rich Text Editor
+
+MadDev utilizes [Lexical](https://lexical.dev/), a rich text editor framework by Facebook, for creating and editing blog posts. The editor is integrated in the `src/components/Editor/Toolbar.tsx` file.
+
+### Payment Integration
+
+MadDev uses [Stripe](https://stripe.com/) for handling payments. The payment logic is implemented in the `src/pages/PaymentPage.tsx` and `src/pages/SubscriptionPage.tsx` files.
 
 ## Contributing
 
