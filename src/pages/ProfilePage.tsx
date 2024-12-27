@@ -7,6 +7,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
+import { toast } from "react-toastify";
 
 const CLOUDINARY_UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -103,7 +104,7 @@ const ProfilePage = () => {
       if (uploadedUrl) {
         imageUrl = uploadedUrl;
       } else {
-        alert("Image upload failed. Please try again.");
+        toast.error("Image upload failed. Please try again.");
         return;
       }
     }
