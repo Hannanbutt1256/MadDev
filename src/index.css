@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Toast container styles */
+.toast-container-light .Toastify__toast {
+    background-color: #ffffff; /* Light background */
+    color: #333333; /* Dark text color */
+  }
+  
+  .toast-container-dark .Toastify__toast {
+    background-color: #333333; /* Dark background */
+    color: #ffffff; /* Light text color */
+  }
+  
+  /* Add styles for close button */
+  .toast-container-light .Toastify__close-button,
+  .toast-container-dark .Toastify__close-button {
+    color: inherit; /* Match text color */
+  }
+  
+  /* Additional styles */
+  .Toastify__progress-bar {
+    background-color: #df4671; /* Progress bar color */
+  }
+  
