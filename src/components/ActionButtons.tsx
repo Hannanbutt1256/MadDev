@@ -18,6 +18,7 @@ import debounce from "lodash.debounce";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { followUser, unfollowUser } from "../store/user/userThunks";
+import { toast } from "react-toastify";
 interface ActionButtonsProps {
   postId: string;
   initialBookmarked?: boolean;
@@ -104,7 +105,7 @@ const ActionButtons = ({
 
   const handleLike = () => {
     if (!user) {
-      alert("You must be logged in to like posts.");
+      toast.info("You must be logged in to like posts.");
       return;
     }
     debouncedLikeHandler(liked);
@@ -140,7 +141,7 @@ const ActionButtons = ({
 
   const handleBookmark = () => {
     if (!user) {
-      alert("You must be logged in to bookmark posts.");
+      toast.info("You must be logged in to bookmark posts.");
       return;
     }
     debouncedBookmarkHandler(bookmarked);
@@ -148,7 +149,7 @@ const ActionButtons = ({
 
   const handleFollowToggle = () => {
     if (!user) {
-      alert("You must be logged in to follow users.");
+      toast.info("You must be logged in to follow users.");
       return;
     }
     if (user.uid === targetUserId) {
