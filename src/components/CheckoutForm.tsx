@@ -4,6 +4,7 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import axios from "axios";
 import { getAuth } from "firebase/auth";
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 const CheckoutForm: React.FC = () => {
   const navigate = useNavigate();
@@ -35,12 +36,12 @@ const CheckoutForm: React.FC = () => {
     event.preventDefault();
 
     if (!stripe || !elements) {
-      alert("Stripe is not loaded!");
+      toast.error("Stripe is not loaded!");
       return;
     }
 
     if (!clientSecret) {
-      alert("Client secret not found!");
+      toast.error("Client secret not found!");
       return;
     }
 
@@ -52,9 +53,9 @@ const CheckoutForm: React.FC = () => {
 
     if (result.error) {
       console.error(result.error.message);
-      alert(`Payment failed: ${result.error.message}`);
+      toast.error(`Payment failed: ${result.error.message}`);
     } else if (result.paymentIntent?.status === "succeeded") {
-      alert("Payment successful!");
+      toast.success("Payment successful!");
       try {
         const auth = getAuth();
         const user = auth.currentUser;
