@@ -8,6 +8,7 @@ import { addPodcast } from "../store/podcast/podcastThunks";
 // import { PodcastInterface } from "../types/podcast";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../utils/firebase";
+import { toast } from "react-toastify";
 // Assuming you have this array defined somewhere
 const predefinedTags = [
   "React",
@@ -378,14 +379,14 @@ const AddPodcastForm: React.FC = () => {
 
     // Validate file type
     if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-      alert("Please select a JPEG or PNG image file.");
+      toast.info("Please select a JPEG or PNG image file.");
       e.target.value = "";
       return;
     }
 
     // Validate file size
     if (file.size > MAX_IMAGE_SIZE) {
-      alert("Image file size must be less than 5MB.");
+      toast.info("Image file size must be less than 5MB.");
       e.target.value = "";
       return;
     }
@@ -410,13 +411,13 @@ const AddPodcastForm: React.FC = () => {
 
       if (data.secure_url) {
         setCoverImageUrl(data.secure_url);
-        alert("Image uploaded successfully!");
+        toast.done("Image uploaded successfully!");
       } else {
         throw new Error("No secure URL in response");
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      alert("Error uploading image. Please try again.");
+      toast.error("Error uploading image. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -430,14 +431,14 @@ const AddPodcastForm: React.FC = () => {
 
     // Validate file type
     if (!ACCEPTED_AUDIO_TYPES.includes(file.type)) {
-      alert("Please select a valid audio file (MP3 or WAV).");
+      toast.info("Please select a valid audio file (MP3 or WAV).");
       e.target.value = "";
       return;
     }
 
     // Validate file size
     if (file.size > MAX_AUDIO_SIZE) {
-      alert("Audio file size must be less than 100MB.");
+      toast.info("Audio file size must be less than 100MB.");
       e.target.value = "";
       return;
     }
@@ -468,7 +469,7 @@ const AddPodcastForm: React.FC = () => {
         audio.src = data.secure_url;
         audio.addEventListener("loadedmetadata", () => {
           setAudioDuration(audio.duration);
-          alert(
+          toast.done(
             `Audio uploaded successfully! Duration: ${audio.duration.toFixed(
               2
             )} seconds`
@@ -478,8 +479,8 @@ const AddPodcastForm: React.FC = () => {
         throw new Error("No secure URL in response");
       }
     } catch (error) {
-      console.error("Error uploading audio:", error);
-      alert("Error uploading audio. Please try again.");
+      // console.error("Error uploading audio:", error);
+      toast.error("Error uploading audio. Please try again." + error);
     } finally {
       setAudioLoading(false);
     }
@@ -501,16 +502,16 @@ const AddPodcastForm: React.FC = () => {
   const onSubmit: SubmitHandler<PodcastSchemaType> = (data) => {
     // Validate that files were uploaded
     if (!coverImageUrl) {
-      alert("Please upload a cover image");
+      toast.warn("Please upload a cover image");
       return;
     }
 
     if (!audioUrl) {
-      alert("Please upload an audio file");
+      toast.warn("Please upload an audio file");
       return;
     }
     if (!audioDuration) {
-      alert("Unable to retrieve audio duration. Please try again.");
+      toast.error("Unable to retrieve audio duration. Please try again.");
       return;
     }
 
