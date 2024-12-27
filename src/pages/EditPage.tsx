@@ -6,6 +6,7 @@ import { addBlogPost } from "../store/posts/postThunks";
 import { useGetPostDataFromLocalStorage } from "../utils/postCombine";
 import { AppDispatch } from "../store/store";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const EditPage = () => {
   const predefinedTags = [
@@ -398,13 +399,13 @@ const EditPage = () => {
         setIsLoading(false);
         if (data.secure_url) {
           setCoverImage(data.secure_url);
-          alert("Image uploaded successfully!");
+          toast.success("Image uploaded successfully!");
         } else {
-          alert("Image upload failed. Please try again.");
+          toast.warn("Image upload failed. Please try again.");
         }
       } catch (error) {
         console.error("Error uploading image:", error);
-        alert("Error uploading image. Please try again.");
+        toast.error("Error uploading image. Please try again.");
       }
     }
   };
@@ -418,7 +419,7 @@ const EditPage = () => {
       localStorage.removeItem("blogPosts");
       navigate("/");
     } else {
-      alert("Failed to retrieve post data from localStorage.");
+      toast.error("Failed to retrieve post data from localStorage.");
     }
   };
   // Save data to localStorage when inputs change
