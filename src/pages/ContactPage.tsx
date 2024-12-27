@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, ValidationError } from "@formspree/react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -7,7 +9,7 @@ const ContactPage = () => {
     email: "",
     message: "",
   });
-
+  const navigate = useNavigate();
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -16,8 +18,37 @@ const ContactPage = () => {
   };
 
   const [state, handleSubmit] = useForm("meooeove");
+
+  useEffect(() => {
+    if (state.succeeded) {
+      toast.success("Form submitted successfully!");
+    }
+  }, [state.succeeded]);
+
+  if (state.submitting) {
+    return (
+      <>
+        <p>Submitting...</p>
+      </>
+    );
+  }
   if (state.succeeded) {
-    return <p>Thanks for contacting us!</p>;
+    return (
+      <>
+        <p>Thanks for contacting us!</p>
+        <button className="" onClick={() => navigate("/")}>
+          Go back to home
+        </button>
+      </>
+    );
+  }
+
+  if (state.errors) {
+    return (
+      <>
+        <p>Something went wrong, please try again!</p>
+      </>
+    );
   }
 
   return (
