@@ -3,6 +3,7 @@ import { TOGGLE_LINK_COMMAND } from "@lexical/link";
 import { useState, useCallback } from "react";
 import { MdLink } from "react-icons/md";
 import Modal from "../../Modal"; // Import your Modal component
+import { toast } from "react-toastify";
 
 const LinkPlugin = () => {
   const [editor] = useLexicalComposerContext();
@@ -34,7 +35,7 @@ const LinkPlugin = () => {
       closeModal();
       setLinkUrl("");
     } else {
-      alert("Please enter a valid URL.");
+      toast.error("Please enter a valid URL.");
     }
   }, [editor, linkUrl]);
 
